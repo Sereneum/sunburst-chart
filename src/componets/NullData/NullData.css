@@ -1,0 +1,41 @@
+.block {
+    width: 100%;
+    min-width: 100%;
+}
+
+
+.attach_container {
+    box-sizing: border-box;
+    flex-shrink: 0;
+    width: 100%;
+    height: min-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    position: relative;
+    align-content: center;
+    flex-wrap: nowrap;
+    gap: 17px;
+    text-align: center;
+}
+
+.attach_cover {
+    border: 2px dashed lightslategrey;
+    /*border-color: lightslategrey;*/
+    box-sizing: border-box;
+    flex-shrink: 0;
+    width: calc(100% - 4px);
+    height: min-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    overflow: hidden;
+    position: relative;
+    align-content: flex-start;
+    border-radius: 20px;
+    opacity: 0.6;
+    cursor: pointer;
+}

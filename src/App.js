@@ -4,6 +4,8 @@ import bigData from './data/data.json'
 import {useState} from "react";
 import Serialization from "./componets/Serialization/Serialization";
 import SunburstBlock from "./componets/SunburstBlock/SunburstBlock";
+import ChartMenu from "./componets/ChartMenu/ChartMenu";
+import NullData from "./componets/NullData/NullData";
 
 
 /*
@@ -26,7 +28,8 @@ import SunburstBlock from "./componets/SunburstBlock/SunburstBlock";
 
 
 function App() {
-    const [data, setData] = useState(testData)
+    const isDataNull = true
+    const [data, setData] = useState(isDataNull ? null : testData)
 
     const addInNode = name => {
         let newChildren = data.children
@@ -39,29 +42,29 @@ function App() {
     }
 
     const globalSetData = (d) => {
+        console.log('globalSetData: ', d)
         setData(d)
     }
-
-    // useEffect(() => {
-    //     console.log('Данные были изменены')
-    // }, [data])
-
 
     return (
         <div className="main-block">
 
-            <div className="sunburst-chart-block">
-                <SunburstBlock data={data}/>
-            </div>
+            {
+                data === null
+                    ?
+                    <NullData update={globalSetData}/>
+                    :
+                    <>
+                        <div className="sunburst-chart-block">
+                            <SunburstBlock data={data}/>
+                        </div>
 
-            <div className="control-block">
-                <Serialization data={data} setData={globalSetData}/>
-            </div>
-
-            {/*<div className="control-chart-block">*/}
-            {/*    <List data={data}/>*/}
-            {/*    <NodeControl data={data} addInNode={addInNode}/>*/}
-            {/*</div>*/}
+                        <div className="control-block">
+                            <ChartMenu/>
+                            <Serialization data={data} setData={globalSetData}/>
+                        </div>
+                    </>
+            }
 
 
         </div>
