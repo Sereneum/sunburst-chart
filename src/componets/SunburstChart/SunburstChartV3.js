@@ -5,6 +5,7 @@ import '../../index.css'
 const SunburstChart = ({root, SIZE, treetopRepositioning}) => {
     const svgRef = useRef(null);
     const [viewBox, setViewBox] = React.useState("0,0,0,0");
+
     const RADIUS = SIZE / 2;
     const isCenter = true
 
@@ -41,9 +42,10 @@ const SunburstChart = ({root, SIZE, treetopRepositioning}) => {
         .startAngle((d) => d.x0)
         .endAngle((d) => d.x1)
         .padAngle((d) => Math.min((d.x1 - d.x0) / 2, 0.005))
-        .padRadius(RADIUS / 2)
+        .padRadius(RADIUS / (2 * root.height))
         .innerRadius((d) => d.y0)
         .outerRadius((d) => d.y1 - 1);
+        // .outerRadius((d) => d.y1 - 1);
 
     const getAutoBox = () => {
         if (!svgRef.current) {
@@ -51,13 +53,19 @@ const SunburstChart = ({root, SIZE, treetopRepositioning}) => {
         }
 
         const {x, y, width, height} = svgRef.current.getBBox();
+        console.log('BOX: ', svgRef.current.getBBox())
 
-        return [x, y, width, height].toString();
+
+        const padding = 20
+
+        // return [x - padding, y - padding, width + 2 * padding, height + 2 * padding].toString();
+        // return [x, y, width, height].toString();
+        return [-RADIUS, -RADIUS, SIZE, SIZE].toString();
     };
-
+    // let viewBox = getAutoBox()
     useEffect(() => {
         setViewBox(getAutoBox());
-    }, []);
+    }, [SIZE]);
 
     const getColor = (d) => {
         if(d.depth === 0) return `rgb(211, 211, 211)`
@@ -74,15 +82,12 @@ const SunburstChart = ({root, SIZE, treetopRepositioning}) => {
     };
 
 
-
     useEffect(() => {
-            // let r = partition(data);
             // очистка дочерних эл-тов
             d3
                 .select(svgRef.current)
                 .selectAll("*")
                 .remove();
-
 
             // заполняем атребуты svg
             const svg = d3.select(svgRef.current)
@@ -91,6 +96,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning}) => {
                 .attr('viewBox', viewBox)
                 .append('g')
                 .attr('fill-opacity', 0.6);
+
 
             /* получение всех path из первого "g" */
             const paths = () => d3.select(svgRef.current)
@@ -106,7 +112,6 @@ const SunburstChart = ({root, SIZE, treetopRepositioning}) => {
                 //
                 .join("text")
                 .text(d => `${d.data.name}`)
-                //
                 .transition()
                 .duration(750)
                 .attrTween("d", (d) => {
@@ -115,11 +120,11 @@ const SunburstChart = ({root, SIZE, treetopRepositioning}) => {
                     return (t) => arc(interpolate(t));
                 });
 
-            // paths()
-            //     .selectAll("text")
-            //     .data(r.descendants().filter((d) => isCenter ? true : d.depth))
-            //     .join("text")
-            //     .text(d => `${d.data.name}`)
+            paths()
+                .selectAll("text")
+                .data(root.descendants().filter((d) => isCenter ? true : d.depth))
+                .join("text")
+                .text(d => `${d.data.name}`)
 
             const pathNodes = d3
                 .select(svgRef.current)
@@ -147,39 +152,11 @@ const SunburstChart = ({root, SIZE, treetopRepositioning}) => {
                 .text(d => d.data.name)
                 .attr('fill-opacity', 0)
                 .each((d, i) => {
-                    const path = pathNodes[i],
-                        client = path.getBoundingClientRect();
-                    const innerRadius = d.y0, outerRadius = d.y1 - 1
+                    // const path = pathNodes[i],
+                    //     client = path.getBoundingClientRect();
+                    // const innerRadius = d.y0, outerRadius = d.y1 - 1
                     // console.log(innerRadius, outerRadius)
-                        // len = path.
-
-
-                    // console.log(`Ширина элемента: ${client.width}px`);
-                    // console.log(`Высота элемента: ${client.height}px`);
-                    // console.log(d.data.name)
-
                 })
-                // .each(function (d, i) {
-                //     console.log(i, d)
-                //     const path = svg.select('g:nth-child(' + (i + 1) + ') path')
-                //     const pathNode = path.node()
-                    // console.log(pathNode)
-                    // const pathLength = pathNode.getTotalLength()
-
-                    // const text = d3.select(this);
-                    // const textNode = text.node();
-                    // const textWidth = textNode.getComputedTextLength();
-                    //
-                    // const fontSize = (pathLength / textWidth) * 12;
-                    // text.style('font-size', fontSize + 'px');
-                    //
-                    // const textPath = text.append('textPath')
-                    //     .attr('href', `#path-${i + 1}`)
-                    //     .text(d.text);
-                // })
-
-
-
             textG
                 .transition()
                 .duration(750)
@@ -196,7 +173,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning}) => {
 
 
     return (
-        <svg ref={svgRef} style={{'border': '2px solid #ffcccb'}}/>
+        <svg ref={svgRef}/>
     );
 };
 

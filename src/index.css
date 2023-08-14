@@ -15,36 +15,43 @@ code {
 
 .main-block {
   display: flex;
-  /*align-items: center;*/
-  /*justify-content: center;*/
-  /*height: 100vh;*/
+  overflow-y: auto;
 }
 
 .control-chart-block {
   height: fit-content;
   align-items: center;
   justify-content: center;
-  /*margin: auto;*/
 }
 
 .sunburst-chart-block {
   flex: 1;
-  /*height: fit-content;*/
-  /*margin-top: 20px;*/
-  /*align-items: center;*/
-  /*justify-content: center;*/
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .control-block {
   flex: 1;
-  /*height: fit-content;*/
-  /*margin-top: 20px;*/
-  /*margin-left: 20px;*/
+  overflow: auto;
+  max-height: 100vh;
 }
 
 .chart {
   align-items: center;
   justify-content: center;
-  padding-top: 20px;
+  /*padding-top: 20px;*/
 }
+
+.fullscreen-enabled {
+  display: flex;
+  background-color: white;
+  align-items: center;
+  justify-content: center;
+  /*padding: 0;*/
+  /*margin: 0;*/
+  /*box-sizing: border-box;*/
+  margin: 20px;
+}
+
 

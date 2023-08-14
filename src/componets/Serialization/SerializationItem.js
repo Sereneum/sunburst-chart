@@ -10,7 +10,7 @@ const SerializationItem = ({item, deep, index, prev = [], changeData}) => {
     const changeName = name => {
         changeData({
             deep, index, prev, modifiedData: {
-                type: 'name',
+                type: 'rename',
                 value: name
             }
         })
@@ -24,6 +24,15 @@ const SerializationItem = ({item, deep, index, prev = [], changeData}) => {
         })
     }
 
+    const addChild = name => {
+        changeData({
+            deep, index, prev, modifiedData: {
+                type: 'add',
+                value: name
+            }
+        })
+    }
+
 
     return (
         <li>
@@ -32,6 +41,7 @@ const SerializationItem = ({item, deep, index, prev = [], changeData}) => {
                 deep={deep}
                 changeName={changeName}
                 deleteFamily={deleteFamily}
+                addChild={addChild}
             />
 
             {item.children

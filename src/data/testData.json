@@ -6,22 +6,22 @@
       "children": [
         {
           "name": "Southern Asia",
-          "value": 10
+          "value": 1
         },
         {
           "name": "Eastern Asia",
-          "value": 10
+          "value": 1
         },
         {
           "name": "South-Eastern Asia",
           "children": [
             {
               "name": "SEA_1",
-              "value": 10
+              "value": 1
             },
             {
               "name": "SEA_2",
-              "value": 10
+              "value": 1
             }
           ]
         }
@@ -32,26 +32,26 @@
       "children": [
         {
           "name": "Eastern Africa",
-          "value": 10
+          "value": 1
         },
         {
           "name": "Western Africa",
-          "value": 10
+          "value": 1
         },
         {
           "name": "North Africa",
-          "value": 10
+          "value": 1
         },
         {
           "name": "Central Africa",
           "children": [
             {
               "name": "CA_1",
-              "value": 10
+              "value": 1
             },
             {
               "name": "CA_2",
-              "value": 10
+              "value": 1
             }
           ]
         }
@@ -62,15 +62,15 @@
       "children": [
         {
           "name": "South America",
-          "value": 10
+          "value": 1
         },
         {
           "name": "Northern America",
-          "value": 10
+          "value": 1
         },
         {
           "name": "Central America",
-          "value": 10
+          "value": 1
         }
       ]
     },
@@ -79,7 +79,7 @@
       "children": [
         {
           "name": "Australia",
-          "value": 10
+          "value": 1
         }
       ]
     }

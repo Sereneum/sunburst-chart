@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import './serialization.css'
-import {DotsSixVertical, Trash} from '@phosphor-icons/react'
+import {DotsSixVertical, Trash, Plus} from '@phosphor-icons/react'
 
-const SerializationItemControl = ({item, deep, changeName, deleteFamily}) => {
+const SerializationItemControl = ({item, deep, changeName, deleteFamily, addChild}) => {
 
     const [input, setInput] = useState(item.name)
 
     useEffect(() => {
-        if(input !== item.name) setInput(item.name)
+        if (input !== item.name) setInput(item.name)
     }, [item.name])
 
     const change = value => {
@@ -17,6 +17,11 @@ const SerializationItemControl = ({item, deep, changeName, deleteFamily}) => {
 
     const leave = () => {
         if (input !== item.name)
+        changeName(input)
+    }
+
+    const handleKeyDown = e => {
+        if (e.key === 'Enter' && input !== item.name)
             changeName(input)
     }
 
@@ -33,12 +38,17 @@ const SerializationItemControl = ({item, deep, changeName, deleteFamily}) => {
                 value={input}
                 onChange={e => change(e.currentTarget.value)}
                 onBlur={leave}
+                onKeyDown={handleKeyDown}
+            />
+            <Plus
+                className="serialization-icon"
+                onClick={() => addChild('')}
             />
             {
                 !!deep
                 &&
                 <Trash
-                    className="trash"
+                    className="serialization-icon"
                     onClick={deleteFamily}
                 />
             }

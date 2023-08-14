@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react'
 import {CloudArrowUp, File} from "@phosphor-icons/react";
 
-const ModalFileLoader = ({active, setMode, update}) => {
+const ModalFileLoader = ({active, setMode, load}) => {
 
     const {isOpen, onOpen, onClose} = useDisclosure()
 
@@ -26,7 +26,7 @@ const ModalFileLoader = ({active, setMode, update}) => {
     }, [isOpen])
 
     const loaded = dataFile => {
-        update(dataFile)
+        load(dataFile)
     }
 
     const onDrop = (acceptedFiles) => {
@@ -76,9 +76,9 @@ const ModalFileLoader = ({active, setMode, update}) => {
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button colorScheme='gray' mr={3} onClick={onClose}>
-                            Закрыть
-                        </Button>
+                        {/*<Button colorScheme='gray' mr={3} onClick={onClose}>*/}
+                        {/*    Закрыть*/}
+                        {/*</Button>*/}
                     </ModalFooter>
                 </ModalContent>
             </Modal>

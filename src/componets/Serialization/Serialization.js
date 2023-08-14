@@ -11,6 +11,12 @@ const Serialization = ({data, setData}) => {
             //корень
             if(modifiedData.type === 'name')
                 clone.name = modifiedData.value
+            if(modifiedData.type === 'add')
+                'children' in clone
+                    ?
+                    clone.children.push({name: modifiedData.value, value: 1})
+                    :
+                    clone.children = [{name: modifiedData.value, value: 1}]
             return clone
         }
 
@@ -22,11 +28,25 @@ const Serialization = ({data, setData}) => {
             prevList = prevList.slice(0, -1)
         }
 
-        if (modifiedData.type === 'name')
+        console.log('modifiedData', modifiedData)
+
+        // return clone
+
+        if (modifiedData.type === 'rename')
             current.children[index].name = modifiedData.value
 
         if (modifiedData.type === 'delete')
             current.children.splice(index, 1)
+
+        if(modifiedData.type === 'add')
+            current.children[index].children
+                ?
+                current.children[index].children.push({name: modifiedData.value, value: 1})
+                :
+                current.children[index] = {name: current.children[index].name, children: [{name: modifiedData.value, value: 1}]}
+
+
+            // current.children[index].children.push({name: modifiedData.value, value: 1})
 
         return clone
     }

@@ -18,7 +18,7 @@ import {ChevronDownIcon} from "@chakra-ui/icons";
 import ModalFileLoader from "./ModalFileLoader";
 import Modals from "./Modals";
 
-const NullData = ({update}) => {
+const NullData = ({update, storageManager}) => {
 
     const [mode, setMode] = useState(null)
 
@@ -27,9 +27,18 @@ const NullData = ({update}) => {
         setMode('file')
     }
 
+    const load = data => {
+        storageManager.save(data)
+        update(data)
+    }
+
+    const voidFile = () => {
+        load({name: "root", value: 1})
+    }
+
     return (
         <>
-            <Modals mode={mode} setMode={setMode} update={update}/>
+            <Modals mode={mode} setMode={setMode} load={load}/>
 
             <div className="block">
 
@@ -46,13 +55,13 @@ const NullData = ({update}) => {
                                 Выберите способ загрузки данных
                             </MenuButton>
                             <MenuList>
-                                <MenuItem type="file" onClick={fileLoading}>
+                                <MenuItem onClick={fileLoading}>
                                     Заргузить .json файл
                                 </MenuItem>
                                 <MenuItem>
                                     Загрузить по ссылке
                                 </MenuItem>
-                                <MenuItem>
+                                <MenuItem onClick={voidFile}>
                                     Ручной ввод
                                 </MenuItem>
                             </MenuList>

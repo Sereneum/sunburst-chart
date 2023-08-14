@@ -12,22 +12,32 @@ import {
 } from '@chakra-ui/react'
 import {ChevronDownIcon} from "@chakra-ui/icons";
 
-const ChartMenu = () => {
+const ChartMenu = ({clear, saveLocal, openFullscreenMode}) => {
     return (
-        <>
+        <div style={{'marginTop': 4}}>
             <Menu>
-                <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                    Actions
+                <MenuButton as={Button} rightIcon={<ChevronDownIcon/>}>
+                    Действия
                 </MenuButton>
                 <MenuList>
-                    <MenuItem>Download</MenuItem>
-                    <MenuItem>Create a Copy</MenuItem>
-                    <MenuItem>Mark as Draft</MenuItem>
-                    <MenuItem>Delete</MenuItem>
-                    <MenuItem>Attend a Workshop</MenuItem>
+                    <MenuItem>
+                        Скачать файл
+                    </MenuItem>
+                    <MenuItem onClick={clear}>
+                        Сменить данные
+                    </MenuItem>
+                    <MenuItem onClick={saveLocal}>
+                        Сохранить изменения локально
+                    </MenuItem>
+                    <MenuItem onClick={openFullscreenMode}>
+                        Отобразить в полноэкранном режиме
+                    </MenuItem>
+                    <MenuItem>
+                        Печать
+                    </MenuItem>
                 </MenuList>
             </Menu>
-        </>
+        </div>
     );
 };
 
