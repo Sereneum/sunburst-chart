@@ -1,0 +1,12 @@
+.NodeControl {
+    display: flex;
+}
+
+input {
+
+}
+
+button {
+    width: 40px;
+    margin-left: 4px;
+}

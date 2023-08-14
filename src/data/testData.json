@@ -1,0 +1,87 @@
+{
+  "name": "treetop",
+  "children": [
+    {
+      "name": "Asia",
+      "children": [
+        {
+          "name": "Southern Asia",
+          "value": 10
+        },
+        {
+          "name": "Eastern Asia",
+          "value": 10
+        },
+        {
+          "name": "South-Eastern Asia",
+          "children": [
+            {
+              "name": "SEA_1",
+              "value": 10
+            },
+            {
+              "name": "SEA_2",
+              "value": 10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Africa",
+      "children": [
+        {
+          "name": "Eastern Africa",
+          "value": 10
+        },
+        {
+          "name": "Western Africa",
+          "value": 10
+        },
+        {
+          "name": "North Africa",
+          "value": 10
+        },
+        {
+          "name": "Central Africa",
+          "children": [
+            {
+              "name": "CA_1",
+              "value": 10
+            },
+            {
+              "name": "CA_2",
+              "value": 10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "America",
+      "children": [
+        {
+          "name": "South America",
+          "value": 10
+        },
+        {
+          "name": "Northern America",
+          "value": 10
+        },
+        {
+          "name": "Central America",
+          "value": 10
+        }
+      ]
+    },
+    {
+      "name": "Oceanic",
+      "children": [
+        {
+          "name": "Australia",
+          "value": 10
+        }
+      ]
+    }
+  ]
+}

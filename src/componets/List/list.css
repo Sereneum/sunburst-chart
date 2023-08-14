@@ -1,0 +1,53 @@
+ol {
+    list-style: none;
+    font-size: 16px;
+    padding: 0;
+    margin: 10px 0;
+    /*gap: 10px;*/
+}
+li {
+    height: fit-content;
+    margin: 0;
+    padding: 0 0 5px 30px;
+    position: relative;
+    line-height: 16px;
+    border: 1px solid gray;
+    border-radius: 4px;
+    /*gap: 10px;*/
+}
+li::before {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 32px;
+    height: 32px;
+    background: #fff;
+    color: #000;
+    text-align: center;
+    line-height: 32px;
+    font-size: 12px;
+    /*border-radius: 50%;*/
+}
+
+
+
+.add {
+    width: 20px;
+    height: 16px;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.name {
+
+}
+
+.add_with_name {
+    display: flex;
+    flex-direction: row;
+
+    align-items: center;
+    justify-content: center;
+}

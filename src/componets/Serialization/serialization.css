@@ -1,0 +1,97 @@
+ol.serialization {
+    margin: 0 0 9px 0;
+    min-height: 10px;
+}
+
+.flex {
+    display: flex;
+    height: 100%;
+}
+
+.flex:hover .trash{
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+
+
+.move-item {
+    align-self: center;
+}
+.move-item {
+    cursor: move;
+    align-self: center;
+    padding-right: 2px;
+}
+
+.group {
+    box-sizing: border-box;
+    border: 1px solid lightpink;
+}
+
+.group ol {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+ol {
+    display: block;
+    list-style-type: decimal;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    padding-inline-start: 40px;
+}
+
+ol.serialization li {
+    display: block;
+    margin: 4px;
+    padding: 4px;
+    border: solid 1px #e4e5ea;
+    border-radius: 4px;
+}
+
+li {
+    display: list-item;
+    text-align: -webkit-match-parent;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    color: #555;
+    background: none;
+
+    box-shadow: none;
+    height: 24px;
+    font-size: 12px;
+    border: 1px solid transparent;
+    transition: all 0.3s;
+    border-radius: 5px;
+    padding-left: 4px;
+    /*text-align: start;*/
+    appearance: auto;
+    -webkit-rtl-ordering: logical;
+    cursor: text;
+    outline: none;
+}
+
+.form-control:hover {
+    border: 1px solid lightgreen;
+}
+
+/*input[type="text" i] {*/
+/*    padding-block: 1px;*/
+/*    padding-inline: 2px;*/
+/*}*/
+
+.trash {
+    cursor: pointer;
+    align-self: center;
+    padding-right: 4px;
+    margin-left: 4px;
+    width: 20px;
+    opacity: 0;
+}
