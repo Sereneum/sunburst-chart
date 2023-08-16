@@ -51,15 +51,6 @@ const SunburstChart = ({root, SIZE, treetopRepositioning}) => {
         if (!svgRef.current) {
             return "";
         }
-
-        const {x, y, width, height} = svgRef.current.getBBox();
-        console.log('BOX: ', svgRef.current.getBBox())
-
-
-        const padding = 20
-
-        // return [x - padding, y - padding, width + 2 * padding, height + 2 * padding].toString();
-        // return [x, y, width, height].toString();
         return [-RADIUS, -RADIUS, SIZE, SIZE].toString();
     };
     // let viewBox = getAutoBox()
@@ -68,7 +59,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning}) => {
     }, [SIZE]);
 
     const getColor = (d) => {
-        if(d.depth === 0) return `rgb(211, 211, 211)`
+        if(d.depth === 0) return `rgb(225, 225, 225)`
         while (d.depth > 1) d = d.parent;
         return color(d.data.name)
     };
@@ -131,6 +122,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning}) => {
                 .select('g')
                 .selectAll('path').nodes()
 
+
             // .attr('className', 'text-container')
             /* текстовые поля */
             const textG = d3
@@ -149,13 +141,43 @@ const SunburstChart = ({root, SIZE, treetopRepositioning}) => {
                 .join("text")
                 .attr("transform", d => getTextTransform(d))
                 .attr("dy", "0.35em")
+                .attr('size', function () {
+                    return this.getBoundingClientRect().width;
+                })
                 .text(d => d.data.name)
                 .attr('fill-opacity', 0)
-                .each((d, i) => {
-                    // const path = pathNodes[i],
-                    //     client = path.getBoundingClientRect();
-                    // const innerRadius = d.y0, outerRadius = d.y1 - 1
-                    // console.log(innerRadius, outerRadius)
+                .each(function (d, i) {
+                    // const path = pathNodes[i];
+                    const textBWidth = this.getBoundingClientRect().width;
+                    const textBHeight = this.getBoundingClientRect().height;
+                    const segmentRadius = d.y1 - d.y0 - 1;
+
+                    // if(this.innerHTML !== 'South-Eastern Asia') return
+
+                    const convR = r => {
+                        r = Math.abs(r)
+                        if(r > 0 && r < 90) return 90 - r
+                        if(r > 90 && r < 180) return r - 90
+                        if(r > 180 && r < 270) return 270 - r
+                        if(r > 270 && r < 360) return 360 - r
+                    }
+
+                    const tr = this.getAttribute('transform');
+                    const rotateGr = tr ? Number(tr.slice(tr.indexOf('(') + 1, tr.indexOf(')'))) : 0
+                    const rotate = (Math.PI * convR(rotateGr)) / 180
+
+
+                    // const x = (textBWidth * Math.cos(rotate) - textBHeight * Math.sin(rotate)) / (Math.pow(Math.cos(rotate), 2) - Math.pow(Math.sin(rotate), 2))
+                    let y = (textBHeight * Math.cos(rotate) - textBWidth * Math.sin(rotate)) / (Math.pow(Math.cos(rotate), 2) - Math.pow(Math.sin(rotate), 2))
+                    const realWidth = rotateGr % 90 ? y : textBWidth
+                    if(realWidth > segmentRadius) {
+                        let text = this.innerHTML
+                        let one = realWidth  / text.length
+                        let l = segmentRadius / one
+                        this.innerHTML = text.slice(0, l - 2)  + '..'
+                    }
+
+
                 })
             textG
                 .transition()

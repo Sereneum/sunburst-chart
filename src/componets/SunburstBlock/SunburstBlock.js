@@ -1,10 +1,32 @@
 import React, {useEffect, useState} from 'react';
 import SunburstChartV3 from "../SunburstChart/SunburstChartV3";
 import '../../index.css'
-import {partition as d3_partition, hierarchy as d3_hierarchy} from "d3";
+import {partition as d3_partition, hierarchy as d3_hierarchy, min} from "d3";
 
-const SunburstBlock = ({data, SIZE=650, isFullscreen=false}) => {
+const SunburstBlock = ({data, isFullscreen=false, parentRef=null}) => {
 
+
+    const [SIZE, setSIZE] = useState(0)
+
+    // useEffect(() => {
+    //     if(isFullscreen) setSIZE(window.screen.height - 20)
+    //     else setSIZE(parentRef.current.getBoundingClientRect().width)
+    //
+    //     console.log(parentRef.current.getBoundingClientRect().width)
+    // }, [isFullscreen, window.screen.height])
+
+    // min(window.screen.width / 2, window.screen.height)
+
+    const  minSize = (a, b) => a > b ? b : a
+
+    useEffect(() => {
+        if(isFullscreen) setSIZE(window.screen.height - 20)
+        else setSIZE(minSize(window.innerWidth / 2, window.innerHeight))
+    }, [isFullscreen])
+
+    // useEffect(() => {
+    //     console.log(parentRef.current.getBoundingClientRect().width)
+    // }, [parentRef.current.getBoundingClientRect().width])
 
     const copy = obj => JSON.parse(JSON.stringify(obj))
 

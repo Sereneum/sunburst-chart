@@ -1,7 +1,7 @@
 import './index.css'
 import testData from './data/testData.json'
 import bigData from './data/data.json'
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import Serialization from "./componets/Serialization/Serialization";
 import SunburstBlock from "./componets/SunburstBlock/SunburstBlock";
 import ChartMenu from "./componets/ChartMenu/ChartMenu";
@@ -36,6 +36,8 @@ function App() {
     const [data, setData] = useState(null)
     const [loading, setLoading] = useState(true)
     const [isFullscreen, setIsFullscreen] = useState(false)
+
+    const refChartBlock = useRef(null)
 
     const handle = useFullScreenHandle()
     // console.log('handle', handle)
@@ -91,6 +93,8 @@ function App() {
 
     if (loading) return <></>
 
+
+
     return (
         <div className="main-block">
             {
@@ -99,9 +103,9 @@ function App() {
                     <NullData update={globalSetData} storageManager={storageManager}/>
                     :
                     <>
-                        <div className="sunburst-chart-block">
+                        <div className="sunburst-chart-block" ref={refChartBlock}>
                             {/*<SunburstChartGpt data={data}/>*/}
-                            <SunburstBlock data={data}/>
+                            <SunburstBlock data={data} parentRef={refChartBlock}/>
                         </div>
 
                         <div className="control-block">

@@ -9,14 +9,15 @@ const Serialization = ({data, setData}) => {
         let clone = JSON.parse(JSON.stringify(data))
         if(!deep) {
             //корень
-            if(modifiedData.type === 'name')
+            if(modifiedData.type === 'rename')
                 clone.name = modifiedData.value
             if(modifiedData.type === 'add')
                 'children' in clone
                     ?
                     clone.children.push({name: modifiedData.value, value: 1})
                     :
-                    clone.children = [{name: modifiedData.value, value: 1}]
+                    clone = {name: clone.name, children: [{name: modifiedData.value, value: 1}]}
+            console.log(clone)
             return clone
         }
 
