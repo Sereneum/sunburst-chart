@@ -4,6 +4,7 @@ import '../../index.css'
 
 const SunburstChart = ({root, SIZE, treetopRepositioning}) => {
     const svgRef = useRef(null);
+    const tooltipRef = useRef(null);
     const [viewBox, setViewBox] = React.useState("0,0,0,0");
 
     const RADIUS = SIZE / 2;
@@ -72,6 +73,16 @@ const SunburstChart = ({root, SIZE, treetopRepositioning}) => {
         return `rotate(${x - 90}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
     };
 
+    // const tooltip = d3.select("body")
+    //     .append("div")
+    //     .attr("class", 'tooltip')
+        // .style("position", "absolute")
+        // .style("background", "white")
+        // .style("padding", "5px")
+        // .style("display", "none")
+        // .style("border", "2px solid black")
+        // .style("")
+
 
     useEffect(() => {
             // очистка дочерних эл-тов
@@ -111,11 +122,11 @@ const SunburstChart = ({root, SIZE, treetopRepositioning}) => {
                     return (t) => arc(interpolate(t));
                 });
 
-            paths()
-                .selectAll("text")
-                .data(root.descendants().filter((d) => isCenter ? true : d.depth))
-                .join("text")
-                .text(d => `${d.data.name}`)
+            // paths()
+            //     .selectAll("text")
+            //     .data(root.descendants().filter((d) => isCenter ? true : d.depth))
+            //     .join("text")
+            //     .text(d => `${d.data.name}`)
 
             const pathNodes = d3
                 .select(svgRef.current)
@@ -184,18 +195,48 @@ const SunburstChart = ({root, SIZE, treetopRepositioning}) => {
                 .duration(750)
                 .attr('fill-opacity', 1);
 
-                /* события */
 
-            paths().on('click', (event, d) => {
+            /* события */
+
+            paths().on('click', function (event, d) {
                 tryOpenPath(d)
-            })
+            });
+
+            paths().on('mouseover', function (event, d) {
+
+                d3.select(this)
+                    .attr("transition", "all 100ms ease-in-out")
+                    .attr("stroke", "#addfad")
+                    .attr("stroke-width", "2");
+
+
+                tooltipRef.current.style.left = `${event.pageX + 10}px`
+                tooltipRef.current.style.top = `${event.pageY + 10}px`
+                tooltipRef.current.style.display = ""
+                tooltipRef.current.innerHTML = `<span>${d.data.name}</span>: ${d.value}`
+
+            });
+
+            paths().on('mouseout', function (event, d) {
+                d3.select(this)
+                    .attr("transition", "all 100ms ease-in-out")
+                    .attr("stroke", "white")
+                    .attr("stroke-width", "0");
+
+                tooltipRef.current.style.display = "none"
+
+            });
+
 
         }
         , [root, viewBox])
 
 
     return (
-        <svg ref={svgRef}/>
+        <>
+            <svg ref={svgRef}/>
+            <div ref={tooltipRef} style={{display: "none"}} className="tooltip">Значение лол</div>
+        </>
     );
 };
 

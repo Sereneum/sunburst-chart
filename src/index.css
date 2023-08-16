@@ -54,4 +54,21 @@ code {
   margin: 20px;
 }
 
+.tooltip {
+  font-size: 14px;
+  position: absolute;
+  background: rgba(255, 255, 255, .85);
+  padding: 5px;
+  /*display: none;*/
+  border-radius: 8px;
+  border: 1px solid black;
+  transition: all 100ms ease-in-out;
+  display: inline-block;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  sans-serif;
+}
 
+.tooltip span {
+  font-weight: 500;
+}

@@ -18,10 +18,10 @@ const SunburstBlock = ({data, isFullscreen=false, parentRef=null}) => {
     // min(window.screen.width / 2, window.screen.height)
 
     const  minSize = (a, b) => a > b ? b : a
-
+    const offset = 35
     useEffect(() => {
         if(isFullscreen) setSIZE(window.screen.height - 20)
-        else setSIZE(minSize(window.innerWidth / 2, window.innerHeight))
+        else setSIZE(minSize(window.innerWidth / 2 - offset, window.innerHeight - offset))
     }, [isFullscreen])
 
     // useEffect(() => {
