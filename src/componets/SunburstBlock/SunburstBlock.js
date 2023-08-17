@@ -2,31 +2,21 @@ import React, {useEffect, useState} from 'react';
 import SunburstChartV3 from "../SunburstChart/SunburstChartV3";
 import '../../index.css'
 import {partition as d3_partition, hierarchy as d3_hierarchy, min} from "d3";
+import SunburstChartV4 from "../SunburstChart/SunburstChartV4";
 
-const SunburstBlock = ({data, isFullscreen=false, parentRef=null}) => {
+const SunburstBlock = ({data, isFullscreen=false, parentRef=null, customRadius}) => {
 
 
     const [SIZE, setSIZE] = useState(0)
 
-    // useEffect(() => {
-    //     if(isFullscreen) setSIZE(window.screen.height - 20)
-    //     else setSIZE(parentRef.current.getBoundingClientRect().width)
-    //
-    //     console.log(parentRef.current.getBoundingClientRect().width)
-    // }, [isFullscreen, window.screen.height])
-
-    // min(window.screen.width / 2, window.screen.height)
 
     const  minSize = (a, b) => a > b ? b : a
     const offset = 35
     useEffect(() => {
         if(isFullscreen) setSIZE(window.screen.height - 20)
-        else setSIZE(minSize(window.innerWidth / 2 - offset, window.innerHeight - offset))
+        else setSIZE(minSize(window.innerWidth / (2/3) - offset, window.innerHeight - offset))
     }, [isFullscreen])
 
-    // useEffect(() => {
-    //     console.log(parentRef.current.getBoundingClientRect().width)
-    // }, [parentRef.current.getBoundingClientRect().width])
 
     const copy = obj => JSON.parse(JSON.stringify(obj))
 
@@ -40,16 +30,16 @@ const SunburstBlock = ({data, isFullscreen=false, parentRef=null}) => {
 
 
     /*  */
-    const [dataRoot, setDataRoot] = useState(partition(data))
+    // const [dataRoot, setDataRoot] = useState(partition(data))
 
     const [root, setRoot] = useState({
-        tree: dataRoot ? dataRoot : partition(data),
+        tree: partition(data),
         history: []
     })
 
     useEffect(() => {
         let new_root = partition(data)
-        setDataRoot(new_root)
+        // setDataRoot(new_root)
         setRoot({
             tree: new_root,
             history: []
@@ -110,18 +100,12 @@ const SunburstBlock = ({data, isFullscreen=false, parentRef=null}) => {
                 &&
                 root.tree.children
                 &&
-                <SunburstChartV3
+                <SunburstChartV4
                     SIZE={SIZE}
                     root={partition(copy(root.tree.data))}
                     treetopRepositioning={treetopRepositioningV2}
+                    customRadius={customRadius}
                 />
-                // <SunburstChartV4 data={data} />
-                // <SunburstChartGpt data={data} />
-                // <SunburstChartV4
-                //     SIZE={SIZE}
-                //     root={partition(copy(root.tree.data))}
-                //     treetopRepositioning={treetopRepositioningV2}
-                // />
             }
         </div>
     );

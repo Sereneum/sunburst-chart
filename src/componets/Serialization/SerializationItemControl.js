@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import './serialization.css'
-import {DotsSixVertical, Trash, Plus} from '@phosphor-icons/react'
+import {DotsSixVertical, Trash, Plus, ArrowsOutSimple} from '@phosphor-icons/react'
 
 const SerializationItemControl = ({item, deep, changeName, deleteFamily, addChild}) => {
 
@@ -28,10 +28,15 @@ const SerializationItemControl = ({item, deep, changeName, deleteFamily, addChil
 
     return (
         <div className="flex">
-            <DotsSixVertical
-                className="move-item"
-                weight="bold"
-            />
+            {/*<DotsSixVertical*/}
+            {/*    className="move-item"*/}
+            {/*    weight="bold"*/}
+            {/*/>*/}
+            {/*<ArrowsOutSimple*/}
+            {/*    className="resize-item"*/}
+            {/*    // weight="bold"*/}
+            {/*    size={20}*/}
+            {/*/>*/}
             <input
                 type="text"
                 className="form-control"

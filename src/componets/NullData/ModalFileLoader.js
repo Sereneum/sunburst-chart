@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react'
 import {CloudArrowUp, File} from "@phosphor-icons/react";
 
+
 const ModalFileLoader = ({active, setMode, load}) => {
 
     const {isOpen, onOpen, onClose} = useDisclosure()

@@ -1,6 +1,4 @@
 import './index.css'
-import testData from './data/testData.json'
-import bigData from './data/data.json'
 import {useEffect, useRef, useState} from "react";
 import Serialization from "./componets/Serialization/Serialization";
 import SunburstBlock from "./componets/SunburstBlock/SunburstBlock";
@@ -8,7 +6,6 @@ import ChartMenu from "./componets/ChartMenu/ChartMenu";
 import NullData from "./componets/NullData/NullData";
 import {FullScreen, useFullScreenHandle} from "react-full-screen";
 import SunburstChartFullscreen from "./componets/SunburstChart/SunburstChartFullscreen";
-import SunburstChartGpt from "./componets/SunburstChart/SunburstChartGpt";
 
 
 /*
@@ -36,11 +33,12 @@ function App() {
     const [data, setData] = useState(null)
     const [loading, setLoading] = useState(true)
     const [isFullscreen, setIsFullscreen] = useState(false)
+    const [customRadius, setCustomRadius] = useState(null)
 
     const refChartBlock = useRef(null)
 
     const handle = useFullScreenHandle()
-    // console.log('handle', handle)
+
 
     const globalSetData = (d) => {
         console.log('globalSetData: ', d)
@@ -49,14 +47,24 @@ function App() {
 
     const storageManager = {
         key: 'chart-data',
-        save: function () {
-            return localStorage.setItem(this.key, JSON.stringify(data))
+        keyCustomRadius: 'custom-radius',
+        save: function (d=null) {
+            return localStorage.setItem(this.key, JSON.stringify(d === null ? data : d))
         },
         clear: function () {
             localStorage.setItem(this.key, null)
         },
         get: function () {
             return JSON.parse(localStorage.getItem(this.key))
+        },
+        saveCustomRadius: function () {
+            localStorage.setItem(this.keyCustomRadius, JSON.stringify(customRadius))
+        },
+        getCustomRadius: function () {
+            return JSON.parse(localStorage.getItem(this.keyCustomRadius))
+        },
+        clearCustomRadius: function () {
+            localStorage.setItem(this.keyCustomRadius, null)
         }
     }
 
@@ -72,6 +80,18 @@ function App() {
         }
     }, [])
 
+    useEffect(() => {
+        try {
+            let customRadiusFromStorage = storageManager.getCustomRadius()
+            setCustomRadius(customRadiusFromStorage)
+            // setLoading(false)
+        } catch (e) {
+            console.log('ОШИБКА ЧТЕНИЯ КАСТОМНЫХ РАЗМЕРОВ ГРАФИКА ИЗ ЛОКАЛЬНОГО ХРАНИЛИЩА')
+            // setLoading(false)
+        }
+    }, [])
+
+
     const clear = () => {
         storageManager.clear()
         setData(null)
@@ -79,6 +99,7 @@ function App() {
 
     const saveLocal = () => {
         storageManager.save()
+        storageManager.saveCustomRadius()
     }
 
     const openFullscreenMode = () => {
@@ -90,6 +111,9 @@ function App() {
         if (handle.active && isFullscreen)
             setIsFullscreen(false)
     }, [handle.active])
+
+
+
 
     if (loading) return <></>
 
@@ -105,7 +129,7 @@ function App() {
                     <>
                         <div className="sunburst-chart-block" ref={refChartBlock}>
                             {/*<SunburstChartGpt data={data}/>*/}
-                            <SunburstBlock data={data} parentRef={refChartBlock}/>
+                            <SunburstBlock data={data} parentRef={refChartBlock} customRadius={customRadius}/>
                         </div>
 
                         <div className="control-block">
@@ -113,11 +137,14 @@ function App() {
                                 clear={clear}
                                 saveLocal={saveLocal}
                                 openFullscreenMode={openFullscreenMode}
+                                data={data}
+                                customRadius={customRadius}
+                                setCustomRadius={setCustomRadius}
                             />
                             <Serialization data={data} setData={globalSetData}/>
                         </div>
                         <FullScreen handle={handle}>
-                            <SunburstChartFullscreen isView={handle.active} data={data}/>
+                            <SunburstChartFullscreen isView={handle.active} data={data} customRadius={customRadius}/>
                         </FullScreen>
                     </>
             }

@@ -14,12 +14,13 @@ ol.serialization {
 }
 
 
-
-.move-item {
-    align-self: center;
-}
 .move-item {
     cursor: move;
+    align-self: center;
+    padding-right: 2px;
+}
+
+.resize-item {
     align-self: center;
     padding-right: 2px;
 }
@@ -81,11 +82,6 @@ li {
 .form-control:hover {
     border: 1px solid lightgreen;
 }
-
-/*input[type="text" i] {*/
-/*    padding-block: 1px;*/
-/*    padding-inline: 2px;*/
-/*}*/
 
 .serialization-icon {
     cursor: pointer;
