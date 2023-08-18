@@ -1,7 +1,7 @@
 import React from 'react';
 import SunburstBlock from "../SunburstBlock/SunburstBlock";
 
-const SunburstChartFullscreen = ({isView, data, customRadius}) => {
+const SunburstChartFullscreen = ({isView}) => {
     const SIZE = Math.floor(window.screen.height - 20)
 
     return (
@@ -9,7 +9,7 @@ const SunburstChartFullscreen = ({isView, data, customRadius}) => {
             {
                 isView
                 &&
-                <SunburstBlock isFullscreen={true} data={data} SIZE={SIZE} customRadius={customRadius}/>
+                <SunburstBlock isFullscreen={true} SIZE={SIZE}/>
             }
         </div>
     );

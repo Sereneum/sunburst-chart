@@ -1,23 +1,30 @@
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 
 import {
     Menu,
     MenuButton,
     MenuList,
     MenuItem,
-    MenuItemOption,
-    MenuGroup,
-    MenuOptionGroup,
-    MenuDivider, Button, useDisclosure, RangeSlider,
+    Button,
 } from '@chakra-ui/react'
 import {ChevronDownIcon} from "@chakra-ui/icons";
 import MultiRangeSlider from "../RangeSlider/MultiRangeSlider";
+import {Context} from "../../index";
+import {observer} from "mobx-react-lite";
+import {jsonDownloader, svgDownloader} from "../../managers/fileManager";
 
 
-
-const ChartMenu = ({clear, saveLocal, openFullscreenMode, data, customRadius, setCustomRadius}) => {
+const ChartMenu = observer(({clear, saveLocal, openFullscreenMode}) => {
 
     const [isOpenSlider, setIsOpenSlider] = useState(false)
+    const {store} = useContext(Context)
+
+    const openMultiRadiusMenu = () => {
+        setIsOpenSlider(true)
+    }
+
+    const saveCustomRadius = customRadius =>
+        store.setCustomRadius(customRadius)
 
 
     return (
@@ -28,7 +35,7 @@ const ChartMenu = ({clear, saveLocal, openFullscreenMode, data, customRadius, se
                         Действия
                     </MenuButton>
                     <MenuList>
-                        <MenuItem>
+                        <MenuItem onClick={() => jsonDownloader(store.chartData)}>
                             Скачать файл
                         </MenuItem>
                         <MenuItem onClick={clear}>
@@ -41,26 +48,33 @@ const ChartMenu = ({clear, saveLocal, openFullscreenMode, data, customRadius, se
                             Отобразить в полноэкранном режиме
                         </MenuItem>
                         <MenuItem
-                            onClick={() => setIsOpenSlider(true)}
+                            onClick={openMultiRadiusMenu}
                         >
                             Изменить размеры
                         </MenuItem>
                         <MenuItem>
                             Печать
                         </MenuItem>
+                        <MenuItem onClick={svgDownloader}>
+                            Скачать изображение
+                        </MenuItem>
                     </MenuList>
                 </Menu>
             </div>
 
-            <MultiRangeSlider
-                isOpenSlider={isOpenSlider}
-                setOpenSlider={setIsOpenSlider}
-                customRadius={customRadius}
-                setCustomRadius={setCustomRadius}
-                data={data}
-            />
+            {
+                isOpenSlider
+                &&
+                <MultiRangeSlider
+                    isOpenSlider={isOpenSlider}
+                    setOpenSlider={setIsOpenSlider}
+                    chartData={store.chartData}
+                    customRadius={store.customRadius}
+                    setCustomRadius={saveCustomRadius}
+                />
+            }
         </>
     );
-};
+});
 
 export default ChartMenu;

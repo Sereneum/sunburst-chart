@@ -11,7 +11,6 @@ const SerializationItemControl = ({item, deep, changeName, deleteFamily, addChil
     }, [item.name])
 
     const change = value => {
-        if (!value) return
         setInput(value)
     }
 

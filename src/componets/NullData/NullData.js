@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
     Text,
     Card,
@@ -15,12 +15,14 @@ import {
 
 import './NullData.css'
 import {ChevronDownIcon} from "@chakra-ui/icons";
-import ModalFileLoader from "./ModalFileLoader";
 import Modals from "./Modals";
+import {storageManager} from "../../managers/storageManager";
+import {Context} from "../../index";
 
-const NullData = ({update, storageManager}) => {
+const NullData = () => {
 
     const [mode, setMode] = useState(null)
+    const {store} = useContext(Context)
 
     /* открывает модальное окно с загрузкой файлов */
     const fileLoading = () => {
@@ -28,8 +30,8 @@ const NullData = ({update, storageManager}) => {
     }
 
     const load = data => {
-        storageManager.save(data)
-        update(data)
+        storageManager.chartData.save(data)
+        store.setChartData(data)
     }
 
     const voidFile = () => {

@@ -1,12 +1,15 @@
 import './index.css'
-import {useEffect, useRef, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import Serialization from "./componets/Serialization/Serialization";
 import SunburstBlock from "./componets/SunburstBlock/SunburstBlock";
 import ChartMenu from "./componets/ChartMenu/ChartMenu";
 import NullData from "./componets/NullData/NullData";
 import {FullScreen, useFullScreenHandle} from "react-full-screen";
 import SunburstChartFullscreen from "./componets/SunburstChart/SunburstChartFullscreen";
-
+import {Context} from "./index";
+import { observer } from 'mobx-react-lite'
+import {storageManager} from "./managers/storageManager";
+import {sizeManager} from "./managers/sizeManager";
 
 /*
     (1) Кнопка удаления
@@ -27,52 +30,20 @@ import SunburstChartFullscreen from "./componets/SunburstChart/SunburstChartFull
 */
 
 
-function App() {
-    const isDataNull = true
-    // const [data, setData] = useState(isDataNull ? null : testData)
-    const [data, setData] = useState(null)
+const  App = observer(() => {
+
+    const {store} = useContext(Context)
+
     const [loading, setLoading] = useState(true)
     const [isFullscreen, setIsFullscreen] = useState(false)
-    const [customRadius, setCustomRadius] = useState(null)
 
     const refChartBlock = useRef(null)
-
     const handle = useFullScreenHandle()
-
-
-    const globalSetData = (d) => {
-        console.log('globalSetData: ', d)
-        setData(d)
-    }
-
-    const storageManager = {
-        key: 'chart-data',
-        keyCustomRadius: 'custom-radius',
-        save: function (d=null) {
-            return localStorage.setItem(this.key, JSON.stringify(d === null ? data : d))
-        },
-        clear: function () {
-            localStorage.setItem(this.key, null)
-        },
-        get: function () {
-            return JSON.parse(localStorage.getItem(this.key))
-        },
-        saveCustomRadius: function () {
-            localStorage.setItem(this.keyCustomRadius, JSON.stringify(customRadius))
-        },
-        getCustomRadius: function () {
-            return JSON.parse(localStorage.getItem(this.keyCustomRadius))
-        },
-        clearCustomRadius: function () {
-            localStorage.setItem(this.keyCustomRadius, null)
-        }
-    }
-
 
     useEffect(() => {
         try {
-            let storageData = storageManager.get()
-            setData(storageData)
+            let chartData = storageManager.chartData.get()
+            store.setChartData(chartData)
             setLoading(false)
         } catch (e) {
             console.log('ОШИБКА ЧТЕНИЯ ФАЙЛА ИЗ ЛОКАЛЬНОГО ХРАНИЛИЩА')
@@ -82,25 +53,26 @@ function App() {
 
     useEffect(() => {
         try {
-            let customRadiusFromStorage = storageManager.getCustomRadius()
-            setCustomRadius(customRadiusFromStorage)
-            // setLoading(false)
+            let customRadius = storageManager.customRadius.get()
+            store.setCustomRadius(customRadius)
         } catch (e) {
             console.log('ОШИБКА ЧТЕНИЯ КАСТОМНЫХ РАЗМЕРОВ ГРАФИКА ИЗ ЛОКАЛЬНОГО ХРАНИЛИЩА')
-            // setLoading(false)
+            setLoading(false)
         }
     }, [])
 
-
     const clear = () => {
-        storageManager.clear()
-        setData(null)
+        storageManager.chartData.clear()
+        store.setChartData(null)
+
+        storageManager.customRadius.clear()
+        store.setCustomRadius(null)
     }
 
     const saveLocal = () => {
-        storageManager.save()
-        storageManager.saveCustomRadius()
+        storageManager.chartData.save(store.chartData)
     }
+
 
     const openFullscreenMode = () => {
         setIsFullscreen(true)
@@ -114,22 +86,33 @@ function App() {
 
 
 
+    useEffect(() => {
+        let resize = sizeManager({
+            chartData: store.chartData,
+            customRadius: store.customRadius
+        })
+
+        if(resize.isResize) {
+            console.log('resize.r -> ', resize.r)
+            store.setCustomRadius(resize.r)
+            storageManager.customRadius.save(resize.r)
+        }
+
+    }, [store.chartData])
 
     if (loading) return <></>
-
 
 
     return (
         <div className="main-block">
             {
-                data === null
+                store.chartData === null
                     ?
-                    <NullData update={globalSetData} storageManager={storageManager}/>
+                    <NullData />
                     :
                     <>
                         <div className="sunburst-chart-block" ref={refChartBlock}>
-                            {/*<SunburstChartGpt data={data}/>*/}
-                            <SunburstBlock data={data} parentRef={refChartBlock} customRadius={customRadius}/>
+                            <SunburstBlock parentRef={refChartBlock}/>
                         </div>
 
                         <div className="control-block">
@@ -137,19 +120,16 @@ function App() {
                                 clear={clear}
                                 saveLocal={saveLocal}
                                 openFullscreenMode={openFullscreenMode}
-                                data={data}
-                                customRadius={customRadius}
-                                setCustomRadius={setCustomRadius}
                             />
-                            <Serialization data={data} setData={globalSetData}/>
+                            <Serialization />
                         </div>
                         <FullScreen handle={handle}>
-                            <SunburstChartFullscreen isView={handle.active} data={data} customRadius={customRadius}/>
+                            <SunburstChartFullscreen isView={handle.active}/>
                         </FullScreen>
                     </>
             }
         </div>
     );
-}
+})
 
 export default App;

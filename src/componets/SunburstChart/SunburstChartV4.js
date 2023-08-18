@@ -7,6 +7,8 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius}) => {
     const tooltipRef = useRef(null);
     const [viewBox, setViewBox] = React.useState("0,0,0,0");
 
+    console.log(customRadius)
+
     const RADIUS = SIZE / 2;
     const isCenter = true
 
@@ -45,20 +47,33 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius}) => {
     }
 
 
-
     const innerRadius = d => {
-        if(customRadius) return d.depth ? currentCustomRadius(d.depth - 1) * 0.01 * RADIUS : 0
-        else return d.y0
+        let r = customRadius
+        ?
+            d.depth ? currentCustomRadius(d.depth - 1) * 0.01 * RADIUS : 0
+            :
+        d.y0
+
+        return r ? r : 0
+
+        // if(customRadius) return d.depth ? currentCustomRadius(d.depth - 1) * 0.01 * RADIUS : 0
+        // else return d.y0
     }
 
     const outerRadius = d => {
-        if(customRadius) return currentCustomRadius(d.depth) * 0.01 * RADIUS - 1
-        else return d.y1 - 1
+        let r = customRadius
+        ?
+            currentCustomRadius(d.depth) * 0.01 * RADIUS - 1
+            :
+            d.y1 - 1
+        return r ? r : 0
+        // if(customRadius) return currentCustomRadius(d.depth) * 0.01 * RADIUS - 1
+        // else return d.y1 - 1
     }
 
 
 
-    console.log('customRadius: ', customRadius)
+    // console.log('customRadius: ', customRadius)
     const customArc = d3
         .arc()
         .startAngle((d) => d.x0)
@@ -90,7 +105,8 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius}) => {
 
         const x = (((d.x0 + d.x1) / 2) * 180) / Math.PI;
         const y = (innerRadius(d)  + outerRadius(d) + 1) / 2
-
+        // console.log('innerRadius(d) = ', innerRadius(d))
+        // console.log('outerRadius(d) = ', outerRadius(d))
         return `rotate(${x - 90}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
         // const x = (((d.x0 + d.x1) / 2) * 180) / Math.PI;
         // const y = (d.y0 + d.y1) / 2;
@@ -100,7 +116,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius}) => {
 
     useEffect(() => {
 
-            console.log('root', root);
+            // console.log('root', root);
             // очистка дочерних эл-тов
             d3
                 .select(svgRef.current)
@@ -250,7 +266,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius}) => {
 
     return (
         <>
-            <svg ref={svgRef}/>
+            <svg ref={svgRef} id='node'/>
             <div ref={tooltipRef} style={{display: "none"}} className="tooltip">Значение лол</div>
         </>
     );

@@ -1,14 +1,14 @@
-import React, {useEffect, useState} from 'react';
-import SunburstChartV3 from "../SunburstChart/SunburstChartV3";
+import React, {useContext, useEffect, useState} from 'react';
 import '../../index.css'
 import {partition as d3_partition, hierarchy as d3_hierarchy, min} from "d3";
 import SunburstChartV4 from "../SunburstChart/SunburstChartV4";
+import {Context} from "../../index";
+import {observer} from "mobx-react-lite";
 
-const SunburstBlock = ({data, isFullscreen=false, parentRef=null, customRadius}) => {
+const SunburstBlock = observer(({isFullscreen=false, parentRef=null}) => {
 
-
+    const {store} = useContext(Context)
     const [SIZE, setSIZE] = useState(0)
-
 
     const  minSize = (a, b) => a > b ? b : a
     const offset = 35
@@ -29,22 +29,19 @@ const SunburstBlock = ({data, isFullscreen=false, parentRef=null, customRadius})
     );
 
 
-    /*  */
-    // const [dataRoot, setDataRoot] = useState(partition(data))
 
     const [root, setRoot] = useState({
-        tree: partition(data),
+        tree: partition(store.chartData),
         history: []
     })
 
     useEffect(() => {
-        let new_root = partition(data)
-        // setDataRoot(new_root)
+        let new_root = partition(store.chartData)
         setRoot({
             tree: new_root,
             history: []
         })
-    }, [data])
+    }, [store.chartData])
 
     const fillHistory = treetop => {
         let arr = []
@@ -104,11 +101,11 @@ const SunburstBlock = ({data, isFullscreen=false, parentRef=null, customRadius})
                     SIZE={SIZE}
                     root={partition(copy(root.tree.data))}
                     treetopRepositioning={treetopRepositioningV2}
-                    customRadius={customRadius}
+                    customRadius={store.customRadius}
                 />
             }
         </div>
     );
-};
+});
 
 export default SunburstBlock;

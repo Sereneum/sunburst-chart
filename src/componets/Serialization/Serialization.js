@@ -1,12 +1,15 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import './serialization.css'
 import SerializationItem from "./SerializationItem";
+import {Context} from "../../index";
 
 
-const Serialization = ({data, setData}) => {
+const Serialization = () => {
+
+    const {store} = useContext(Context)
 
     const executeOperation = (deep, prev, index, modifiedData) => {
-        let clone = JSON.parse(JSON.stringify(data))
+        let clone = JSON.parse(JSON.stringify(store.chartData))
         if(!deep) {
             //корень
             if(modifiedData.type === 'rename')
@@ -47,20 +50,18 @@ const Serialization = ({data, setData}) => {
                 current.children[index] = {name: current.children[index].name, children: [{name: modifiedData.value, value: 1}]}
 
 
-            // current.children[index].children.push({name: modifiedData.value, value: 1})
-
         return clone
     }
 
     const changeData = ({deep, index, prev, modifiedData}) => {
         let clone = executeOperation(deep, prev, index, modifiedData)
-        setData(clone)
+        store.setChartData(clone)
     }
 
     return (
         <div className="group">
             <ol className="serialization">
-                <SerializationItem item={data} deep={0} index={0} prev={[]} changeData={changeData}/>
+                <SerializationItem item={store.chartData} deep={0} index={0} prev={[]} changeData={changeData}/>
             </ol>
         </div>
     );
