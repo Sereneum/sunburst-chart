@@ -12,19 +12,29 @@ import MultiRangeSlider from "../RangeSlider/MultiRangeSlider";
 import {Context} from "../../index";
 import {observer} from "mobx-react-lite";
 import {jsonDownloader, svgDownloader} from "../../managers/fileManager";
+import ColorSchemeList from "../ColorSchemeList/ColorSchemeList";
 
 
 const ChartMenu = observer(({clear, saveLocal, openFullscreenMode}) => {
 
     const [isOpenSlider, setIsOpenSlider] = useState(false)
+    const [isOpenColorScheme, setIsOpenColorScheme] = useState(false)
     const {store} = useContext(Context)
 
     const openMultiRadiusMenu = () => {
         setIsOpenSlider(true)
     }
 
+    const openColorSchemeList = () => {
+        setIsOpenColorScheme(true)
+    }
+
     const saveCustomRadius = customRadius =>
-        store.setCustomRadius(customRadius)
+        store.setCustomRadius(customRadius);
+
+    const saveColorScheme = colorScheme =>
+        store.setColorScheme(colorScheme)
+
 
 
     return (
@@ -41,9 +51,6 @@ const ChartMenu = observer(({clear, saveLocal, openFullscreenMode}) => {
                         <MenuItem onClick={clear}>
                             Сменить данные
                         </MenuItem>
-                        <MenuItem onClick={saveLocal}>
-                            Сохранить изменения локально
-                        </MenuItem>
                         <MenuItem onClick={openFullscreenMode}>
                             Отобразить в полноэкранном режиме
                         </MenuItem>
@@ -58,6 +65,9 @@ const ChartMenu = observer(({clear, saveLocal, openFullscreenMode}) => {
                         <MenuItem onClick={svgDownloader}>
                             Скачать изображение
                         </MenuItem>
+                        <MenuItem onClick={openColorSchemeList}>
+                            Изменить цветовую тему
+                        </MenuItem>
                     </MenuList>
                 </Menu>
             </div>
@@ -71,6 +81,17 @@ const ChartMenu = observer(({clear, saveLocal, openFullscreenMode}) => {
                     chartData={store.chartData}
                     customRadius={store.customRadius}
                     setCustomRadius={saveCustomRadius}
+                />
+            }
+
+            {
+                isOpenColorScheme
+                &&
+                <ColorSchemeList
+                    isOpenColorScheme={isOpenColorScheme}
+                    setIsOpenColorScheme={setIsOpenColorScheme}
+                    colorScheme={store.colorScheme}
+                    saveColorScheme={saveColorScheme}
                 />
             }
         </>

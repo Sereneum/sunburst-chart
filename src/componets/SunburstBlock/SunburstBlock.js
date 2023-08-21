@@ -102,6 +102,7 @@ const SunburstBlock = observer(({isFullscreen=false, parentRef=null}) => {
                     root={partition(copy(root.tree.data))}
                     treetopRepositioning={treetopRepositioningV2}
                     customRadius={store.customRadius}
+                    chartData={store.chartData}
                 />
             }
         </div>

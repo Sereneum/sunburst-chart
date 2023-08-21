@@ -5,6 +5,7 @@ export default class Store {
     constructor() {
         this._chartData = null
         this._customRadius = null
+        this._colorScheme = null
         makeAutoObservable(this)
     }
 
@@ -17,12 +18,19 @@ export default class Store {
         this._customRadius = customRadius
     }
 
+    setColorScheme(colorScheme) {
+        this._colorScheme = colorScheme
+    }
+
     get chartData() {
-        // return JSON.parse(JSON.stringify(this._chartData))
         return toJS(this._chartData)
     }
 
     get customRadius() {
         return toJS(this._customRadius)
+    }
+
+    get colorScheme() {
+        return toJS(this._colorScheme)
     }
 }

@@ -22,5 +22,17 @@ export const storageManager = {
         clear: function () {
             localStorage.setItem(this.key, null)
         }
+    },
+    colorScheme: {
+        key: 'color-scheme',
+        save: function (d) {
+            localStorage.setItem(this.key, JSON.stringify(d))
+        },
+        get: function () {
+            return JSON.parse(localStorage.getItem(this.key))
+        },
+        clear: function () {
+            localStorage.setItem(this.key, null)
+        }
     }
 }

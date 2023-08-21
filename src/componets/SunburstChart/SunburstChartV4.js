@@ -2,23 +2,61 @@ import React, {useEffect, useRef, useState} from "react";
 import * as d3 from "d3";
 import '../../index.css'
 
-const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius}) => {
+const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartData}) => {
     const svgRef = useRef(null);
     const tooltipRef = useRef(null);
     const [viewBox, setViewBox] = React.useState("0,0,0,0");
 
-    console.log(customRadius)
+    // console.log(customRadius)
 
     const RADIUS = SIZE / 2;
     const isCenter = true
 
     const tryOpenPath = d => {
+        let isTryImmersion = true
+        if (!d.height) isTryImmersion = false
+
+        if(isTryImmersion) {
+            console.log('try Immersion!')
+            if(immersionState.isImmersion) {
+                console.log(immersionState, d)
+                // выбранная вершина - одна из детей текущей => спуск
+                if (root.height - d.height) {
+                    setImmersionState(prev =>  {
+                        return {
+                            isImmersion: true,
+                            parentIndex: prev.parentIndex,
+                            localDepth: prev.localDepth + d.depth
+                        }
+                    })
+                } else {
+                    setImmersionState(prev =>  {
+                        let isRoot = !(prev.localDepth - 1)
+                        return {
+                            isImmersion: !isRoot,
+                            parentIndex: isRoot ? null : prev.parentIndex,
+                            localDepth: isRoot ? null : prev.localDepth - 1
+                        }
+                    })
+                }
+
+
+            } else {
+                if(!d.depth) return
+                let index = findIndex(d);
+                let depth = d.depth;
+                setImmersionState({
+                    isImmersion: true,
+                    parentIndex: index,
+                    localDepth: depth
+                })
+            }
+        }
+
+
+        // end immersionState block
         treetopRepositioning(d)
     }
-
-    const color = d3.scaleOrdinal(
-        d3.quantize(d3.interpolateRainbow, root.children.length + 1)
-    );
 
     const format = d3.format(",d");
 
@@ -94,23 +132,85 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius}) => {
         setViewBox(getAutoBox());
     }, [SIZE]);
 
-    const getColor = (d) => {
-        if (d.depth === 0) return `rgb(225, 225, 225)`
+    const color = d3.scaleOrdinal(
+        d3.quantize(d3.interpolateMagma, root.children.length  + 1)
+    )
+
+    useEffect(() => {
+    }, [])
+
+    const createColorScale = (parentColor, countElements) => {
+        return d3.scaleLinear()
+            .domain([0, countElements])
+            .range([parentColor, '#ffffff'])
+    }
+
+
+
+    const [colors, setColors] = useState([])
+    const [immersionState, setImmersionState] = useState({
+        isImmersion: false,
+        parentIndex: null,
+        localDepth: null
+    })
+
+    useEffect(() => {
+        const parentColors = d3.quantize(d3.interpolateRdYlGn, root.children.length)
+
+        const arr = []
+        for (let i = 0; i < parentColors.length; ++i) {
+            const colorScale = createColorScale(parentColors[i], root.children[i].height + 1)
+            arr.push([])
+            for (let j = 0; j < root.children[i].height + 1; ++j)
+                arr[i].push(colorScale(j));
+        }
+
+        setColors(arr);
+        console.log('colors: ', arr);
+    }, [chartData])
+
+    // const getColor = (d) => {
+    //     console.log('is colors -> ', colors !== null)
+    //     if (d.depth === 0) return `rgb(225, 225, 225)`
+    //     while (d.depth > 1) d = d.parent;
+    //     const c = color(d.data.name);
+    //     return c;
+    // };
+
+    const findIndex = d => {
+        let ind = -1;
         while (d.depth > 1) d = d.parent;
-        return color(d.data.name)
-    };
+        d.parent.children.forEach((node, index) => {
+            if(node === d) ind = index
+        })
+        return ind
+    }
+
+    const getColor = d => {
+        if (!d.depth && !immersionState.isImmersion) return 'rgb(255, 255, 255)'
+        const childDepth = d.depth;
+        const childHeight = d.height;
+        try {
+
+            if (immersionState.isImmersion) {
+                return colors[immersionState.parentIndex][immersionState.localDepth + childDepth - 1]
+            } else {
+                const parentIndex = findIndex(d);
+                return colors[parentIndex][childDepth - 1];
+            }
+
+            // return colors[parentIndex][childDepth - 1];
+        } catch (e) {
+            return 'rgb(0,0,0)'
+        }
+    }
 
     const getTextTransform = (d) => {
         if (!d.depth) return
 
         const x = (((d.x0 + d.x1) / 2) * 180) / Math.PI;
         const y = (innerRadius(d)  + outerRadius(d) + 1) / 2
-        // console.log('innerRadius(d) = ', innerRadius(d))
-        // console.log('outerRadius(d) = ', outerRadius(d))
         return `rotate(${x - 90}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
-        // const x = (((d.x0 + d.x1) / 2) * 180) / Math.PI;
-        // const y = (d.y0 + d.y1) / 2;
-        // return `rotate(${x - 90}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
     };
 
 
@@ -190,12 +290,11 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius}) => {
                 .text(d => d.data.name)
                 .attr('fill-opacity', 0)
                 .each(function (d, i) {
-                    // const path = pathNodes[i];
+                    const path = pathNodes[i];
                     const textBWidth = this.getBoundingClientRect().width;
                     const textBHeight = this.getBoundingClientRect().height;
-                    // const segmentRadius = d.y1 - d.y0 - 1;
                     const segmentRadius = outerRadius(d) - innerRadius(d);
-                    // if(this.innerHTML !== 'South-Eastern Asia') return
+
 
                     const convR = r => {
                         r = Math.abs(r)
@@ -209,15 +308,43 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius}) => {
                     const rotateGr = tr ? Number(tr.slice(tr.indexOf('(') + 1, tr.indexOf(')'))) : 0
                     const rotate = (Math.PI * convR(rotateGr)) / 180
 
+                    const conv90 = rot => {
+                        if(Math.abs(rot) === 90 || Math.abs(rot) === 270) return textBHeight
+                        else return textBWidth
+                    }
 
-                    // const x = (textBWidth * Math.cos(rotate) - textBHeight * Math.sin(rotate)) / (Math.pow(Math.cos(rotate), 2) - Math.pow(Math.sin(rotate), 2))
-                    let y = (textBHeight * Math.cos(rotate) - textBWidth * Math.sin(rotate)) / (Math.pow(Math.cos(rotate), 2) - Math.pow(Math.sin(rotate), 2))
-                    const realWidth = rotateGr % 90 ? y : textBWidth
+                    // const x = (textBWidth * Math.cos(rotate) - textBHeight * Math.sin(rotate))
+                    // / (Math.pow(Math.cos(rotate), 2) - Math.pow(Math.sin(rotate), 2))
+                    let y = (textBHeight * Math.cos(rotate) - textBWidth * Math.sin(rotate))
+                        / (Math.pow(Math.cos(rotate), 2) - Math.pow(Math.sin(rotate), 2))
+                    let realWidth = rotateGr % 90 ? y : conv90(rotateGr);
+
+                    if(!(convR(rotateGr) % 45) && (convR(rotateGr) % 90))
+                        realWidth = textBWidth * Math.sqrt(2);
+
+                    // if(this.innerHTML === 'Southern Asia' || this.innerHTML === 'Eastern Asia' || this.innerHTML == 'SEA_1')
+                    //     console.log(
+                    //         {
+                    //             name: this.innerHTML,
+                    //             segmentRadius,
+                    //             realWidth,
+                    //             textBWidth,
+                    //             textBHeight,
+                    //             y,
+                    //             rotateGr,
+                    //             conv: convR(rotateGr),
+                    //             rotate: (Math.PI * convR(rotateGr)) / 180,
+                    //             r1: (textBHeight * Math.cos(rotate) - textBWidth * Math.sin(rotate)),
+                    //             r2: (Math.pow(Math.cos(rotate), 2) - Math.pow(Math.sin(rotate), 2))
+                    //         }
+                    //     )
+
                     if (realWidth > segmentRadius) {
                         let text = this.innerHTML
                         let one = realWidth / text.length
                         let l = segmentRadius / one
                         this.innerHTML = text.slice(0, l - 2) + '..'
+                        if(this.innerHTML === '..') this.innerHTML = ''
                     }
 
 

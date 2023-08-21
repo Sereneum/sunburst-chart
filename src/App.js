@@ -61,6 +61,20 @@ const  App = observer(() => {
         }
     }, [])
 
+
+    useEffect(() => {
+        const handleBeforeUnload = (event) => {
+            saveLocal();
+        };
+
+        window.addEventListener("beforeunload", handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+            saveLocal();
+        };
+    }, []);
+
     const clear = () => {
         storageManager.chartData.clear()
         store.setChartData(null)
