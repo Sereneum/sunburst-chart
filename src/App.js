@@ -40,6 +40,8 @@ const  App = observer(() => {
     const refChartBlock = useRef(null)
     const handle = useFullScreenHandle()
 
+
+    // chartData
     useEffect(() => {
         try {
             let chartData = storageManager.chartData.get()
@@ -51,13 +53,23 @@ const  App = observer(() => {
         }
     }, [])
 
+    // customRadius
     useEffect(() => {
         try {
             let customRadius = storageManager.customRadius.get()
             store.setCustomRadius(customRadius)
         } catch (e) {
             console.log('ОШИБКА ЧТЕНИЯ КАСТОМНЫХ РАЗМЕРОВ ГРАФИКА ИЗ ЛОКАЛЬНОГО ХРАНИЛИЩА')
-            setLoading(false)
+        }
+    }, [])
+
+    // colorScheme
+    useEffect(() => {
+        try {
+            let colorScheme = storageManager.colorScheme.get()
+            store.setColorScheme(colorScheme)
+        } catch (e) {
+            console.log('ОШИБКА ЧТЕНИЯ ЦВЕТОВОЙ ТЕМЫ ИЗ ЛОКАЛЬНОГО ХРАНИЛИЩА')
         }
     }, [])
 
@@ -75,6 +87,7 @@ const  App = observer(() => {
         };
     }, []);
 
+    /* очистка данных */
     const clear = () => {
         storageManager.chartData.clear()
         store.setChartData(null)

@@ -1,20 +1,21 @@
 import React, {useEffect, useRef, useState} from "react";
 import * as d3 from "d3";
 import '../../index.css'
+import {colorSchemesObject} from "../../managers/colorManager";
 
-const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartData}) => {
+const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartData, colorScheme}) => {
     const svgRef = useRef(null);
     const tooltipRef = useRef(null);
     const [viewBox, setViewBox] = React.useState("0,0,0,0");
 
-    // console.log(customRadius)
-
     const RADIUS = SIZE / 2;
+    const opacity = 1;
     const isCenter = true
 
     const tryOpenPath = d => {
         let isTryImmersion = true
         if (!d.height) isTryImmersion = false
+
 
         if(isTryImmersion) {
             console.log('try Immersion!')
@@ -136,13 +137,12 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
         d3.quantize(d3.interpolateMagma, root.children.length  + 1)
     )
 
-    useEffect(() => {
-    }, [])
 
     const createColorScale = (parentColor, countElements) => {
         return d3.scaleLinear()
             .domain([0, countElements])
             .range([parentColor, '#ffffff'])
+            // .range([parentColor, '#ffffff'])
     }
 
 
@@ -154,8 +154,17 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
         localDepth: null
     })
 
+    const getColorSchemeFunc = () => {
+        try {
+            return colorSchemesObject[colorScheme].func
+        } catch (e) {
+            return colorSchemesObject.interpolateViridis.func
+        }
+    }
+
+
     useEffect(() => {
-        const parentColors = d3.quantize(d3.interpolateRdYlGn, root.children.length)
+        const parentColors = d3.quantize(getColorSchemeFunc(), root.children.length)
 
         const arr = []
         for (let i = 0; i < parentColors.length; ++i) {
@@ -167,7 +176,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
 
         setColors(arr);
         console.log('colors: ', arr);
-    }, [chartData])
+    }, [chartData, colorScheme])
 
     // const getColor = (d) => {
     //     console.log('is colors -> ', colors !== null)
@@ -229,7 +238,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
                 .attr('height', SIZE)
                 .attr('viewBox', viewBox)
                 .append('g')
-                .attr('fill-opacity', 0.6);
+                .attr('fill-opacity', opacity);
 
 
             /* получение всех path из первого "g" */
@@ -386,9 +395,8 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
 
             });
 
-
         }
-        , [root, viewBox])
+        , [root, colors, viewBox])
 
 
     return (

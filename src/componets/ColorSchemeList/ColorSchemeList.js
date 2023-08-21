@@ -10,10 +10,21 @@ import {
     ModalCloseButton,
 } from '@chakra-ui/react'
 import {colorSchemesObject} from "../../managers/colorManager";
+import {storageManager} from "../../managers/storageManager";
 
 const ColorSchemeList = ({isOpenColorScheme, setIsOpenColorScheme, colorScheme, saveColorScheme}) => {
     const {isOpen, onOpen, onClose} = useDisclosure();
-    const [radioValue, setRadioValue] = useState('0')
+    const init = () => {
+        try {
+            let index = Object.keys(colorSchemesObject).indexOf(colorScheme)
+            if(index >= 0) return index.toString()
+            else return '1'
+        } catch (e) {
+            return '1'
+        }
+    }
+
+    const [radioValue, setRadioValue] = useState(Object.keys(colorSchemesObject).indexOf(colorScheme).toString())
 
 
     useEffect(() => {
@@ -21,14 +32,14 @@ const ColorSchemeList = ({isOpenColorScheme, setIsOpenColorScheme, colorScheme, 
     }, [isOpenColorScheme])
 
 
-    const closeModal = () => {
+    const saveAndCloseModal = () => {
+        let key = Object.keys(colorSchemesObject)[Number(radioValue)]
+        console.log(key)
+        storageManager.colorScheme.save(key)
+        saveColorScheme(key)
         setIsOpenColorScheme(false)
         onClose()
     }
-
-    useEffect(() => {
-        console.log('radioValue', radioValue)
-    }, [setRadioValue])
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -57,7 +68,7 @@ const ColorSchemeList = ({isOpenColorScheme, setIsOpenColorScheme, colorScheme, 
                 </ModalBody>
 
                 <ModalFooter>
-                    <Button colorScheme='blue' mr={3} onClick={onClose}>
+                    <Button colorScheme='blue' mr={3} onClick={saveAndCloseModal}>
                         Сохранить
                     </Button>
                     <Button variant='ghost'>Закрыть</Button>

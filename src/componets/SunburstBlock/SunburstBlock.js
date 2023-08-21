@@ -103,6 +103,7 @@ const SunburstBlock = observer(({isFullscreen=false, parentRef=null}) => {
                     treetopRepositioning={treetopRepositioningV2}
                     customRadius={store.customRadius}
                     chartData={store.chartData}
+                    colorScheme={store.colorScheme}
                 />
             }
         </div>
