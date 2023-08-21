@@ -100,7 +100,6 @@ const  App = observer(() => {
         storageManager.chartData.save(store.chartData)
     }
 
-
     const openFullscreenMode = () => {
         setIsFullscreen(true)
         handle.enter().then(r => console.log(r))

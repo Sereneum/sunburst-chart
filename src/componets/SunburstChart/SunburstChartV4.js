@@ -3,13 +3,13 @@ import * as d3 from "d3";
 import '../../index.css'
 import {colorSchemesObject} from "../../managers/colorManager";
 
-const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartData, colorScheme}) => {
+const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartData, colorScheme, rootData}) => {
     const svgRef = useRef(null);
     const tooltipRef = useRef(null);
     const [viewBox, setViewBox] = React.useState("0,0,0,0");
 
     const RADIUS = SIZE / 2;
-    const opacity = 1;
+    const opacity = .6;
     const isCenter = true
 
     const tryOpenPath = d => {
@@ -18,9 +18,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
 
 
         if(isTryImmersion) {
-            console.log('try Immersion!')
             if(immersionState.isImmersion) {
-                console.log(immersionState, d)
                 // выбранная вершина - одна из детей текущей => спуск
                 if (root.height - d.height) {
                     setImmersionState(prev =>  {
@@ -146,13 +144,17 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
     }
 
 
+    const voidImmersionState = () => {
+        return JSON.parse(JSON.stringify({
+            isImmersion: false,
+            parentIndex: null,
+            localDepth: null
+        }))
+    }
+
 
     const [colors, setColors] = useState([])
-    const [immersionState, setImmersionState] = useState({
-        isImmersion: false,
-        parentIndex: null,
-        localDepth: null
-    })
+    const [immersionState, setImmersionState] = useState(voidImmersionState())
 
     const getColorSchemeFunc = () => {
         try {
@@ -164,27 +166,20 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
 
 
     useEffect(() => {
-        const parentColors = d3.quantize(getColorSchemeFunc(), root.children.length)
-
+        const parentColors = d3.quantize(getColorSchemeFunc(), rootData.children.length)
         const arr = []
         for (let i = 0; i < parentColors.length; ++i) {
-            const colorScale = createColorScale(parentColors[i], root.children[i].height + 1)
+            const colorScale = createColorScale(parentColors[i], rootData.children[i].height + 1)
             arr.push([])
-            for (let j = 0; j < root.children[i].height + 1; ++j)
+            for (let j = 0; j < rootData.children[i].height + 1; ++j)
                 arr[i].push(colorScale(j));
         }
 
+
         setColors(arr);
-        console.log('colors: ', arr);
     }, [chartData, colorScheme])
 
-    // const getColor = (d) => {
-    //     console.log('is colors -> ', colors !== null)
-    //     if (d.depth === 0) return `rgb(225, 225, 225)`
-    //     while (d.depth > 1) d = d.parent;
-    //     const c = color(d.data.name);
-    //     return c;
-    // };
+    // rootData
 
     const findIndex = d => {
         let ind = -1;
@@ -224,7 +219,8 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
 
 
     useEffect(() => {
-
+            // if(immersionState !== voidImmersionState())
+            //     setImmersionState(voidImmersionState());
             // console.log('root', root);
             // очистка дочерних эл-тов
             d3

@@ -35,6 +35,8 @@ const SunburstBlock = observer(({isFullscreen=false, parentRef=null}) => {
         history: []
     })
 
+    const [rootData, setRootData] = useState(partition(store.chartData));
+
     useEffect(() => {
         let new_root = partition(store.chartData)
         setRoot({
@@ -42,6 +44,10 @@ const SunburstBlock = observer(({isFullscreen=false, parentRef=null}) => {
             history: []
         })
     }, [store.chartData])
+
+    useEffect(() => {
+        setRootData(partition(store.chartData))
+        }, [store.chartData])
 
     const fillHistory = treetop => {
         let arr = []
@@ -104,6 +110,7 @@ const SunburstBlock = observer(({isFullscreen=false, parentRef=null}) => {
                     customRadius={store.customRadius}
                     chartData={store.chartData}
                     colorScheme={store.colorScheme}
+                    rootData={rootData}
                 />
             }
         </div>

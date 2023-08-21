@@ -62,9 +62,9 @@ const ChartMenu = observer(({clear, saveLocal, openFullscreenMode}) => {
                         <MenuItem>
                             Печать
                         </MenuItem>
-                        <MenuItem onClick={svgDownloader}>
-                            Скачать изображение
-                        </MenuItem>
+                        {/*<MenuItem onClick={svgDownloader}>*/}
+                        {/*    Скачать изображение*/}
+                        {/*</MenuItem>*/}
                         <MenuItem onClick={openColorSchemeList}>
                             Изменить цветовую тему
                         </MenuItem>

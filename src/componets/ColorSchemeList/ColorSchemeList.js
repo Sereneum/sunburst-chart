@@ -31,15 +31,19 @@ const ColorSchemeList = ({isOpenColorScheme, setIsOpenColorScheme, colorScheme, 
         if (isOpenColorScheme) onOpen()
     }, [isOpenColorScheme])
 
+    const closeModal = () =>
+        onClose();
 
-    const saveAndCloseModal = () => {
+    const save = () => {
         let key = Object.keys(colorSchemesObject)[Number(radioValue)]
         console.log(key)
         storageManager.colorScheme.save(key)
         saveColorScheme(key)
         setIsOpenColorScheme(false)
-        onClose()
+        closeModal()
     }
+
+
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -68,10 +72,10 @@ const ColorSchemeList = ({isOpenColorScheme, setIsOpenColorScheme, colorScheme, 
                 </ModalBody>
 
                 <ModalFooter>
-                    <Button colorScheme='blue' mr={3} onClick={saveAndCloseModal}>
+                    <Button colorScheme='blue' mr={3} onClick={save}>
                         Сохранить
                     </Button>
-                    <Button variant='ghost'>Закрыть</Button>
+                    <Button variant='ghost' onClick={closeModal}>Закрыть</Button>
                 </ModalFooter>
             </ModalContent>
         </Modal>

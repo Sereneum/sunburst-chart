@@ -33,7 +33,7 @@ const MultiRangeSlider = ({isOpenSlider, setOpenSlider, chartData, customRadius,
 
 
     const mdx = funcDepth(chartData, 0, 0)
-    console.log('mdx', mdx)
+    // console.log('mdx', mdx)
 
     const createValues = mdx => {
         let arr = [100 / (mdx + 1)]
@@ -61,7 +61,7 @@ const MultiRangeSlider = ({isOpenSlider, setOpenSlider, chartData, customRadius,
 
     const [sliderValues, setSliderValues] = useState(customRadius ? customRadius : createValues(mdx));
 
-    console.log('sliderValues = ', sliderValues)
+    // console.log('sliderValues = ', sliderValues)
 
 
     /* случай, когда данные обнуляются */
@@ -81,7 +81,6 @@ const MultiRangeSlider = ({isOpenSlider, setOpenSlider, chartData, customRadius,
 
     /* двигаем ползунок */
     const handleChange = (values) => {
-        console.log(values)
         values[values.length - 1] = 100
         if (values[0] < offset) values[0] = offset;
         setSliderValues(values);
@@ -116,7 +115,7 @@ const MultiRangeSlider = ({isOpenSlider, setOpenSlider, chartData, customRadius,
     }
 
     const save = () => {
-        console.log('save -> sliderValues', sliderValues)
+        // console.log('save -> sliderValues', sliderValues)
         setCustomRadius(sliderValues)
         storageManager.customRadius.save(sliderValues)
         closeModal()
