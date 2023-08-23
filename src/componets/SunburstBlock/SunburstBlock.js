@@ -11,12 +11,13 @@ const SunburstBlock = observer(({isFullscreen=false, parentRef=null, isPrintMode
     const [SIZE, setSIZE] = useState(0)
 
     const  minSize = (a, b) => a > b ? b : a
-    const offset = 35
+    const offset = 40
     useEffect(() => {
         if (isFullscreen) setSIZE(window.screen.height - 20)
-        else if (isPrintMode) setSIZE(window.innerHeight - 60)
+        else if (isPrintMode) setSIZE(window.innerHeight - 80)
         else setSIZE(minSize(window.innerWidth / (2 / 3) - offset, window.innerHeight - offset))
-    }, [isFullscreen])
+        console.log('SIZE', SIZE)
+    }, [isFullscreen, isPrintMode])
 
 
     const copy = obj => JSON.parse(JSON.stringify(obj))
@@ -112,7 +113,7 @@ const SunburstBlock = observer(({isFullscreen=false, parentRef=null, isPrintMode
 
 
     return (
-        <div className={`chart ${isPrintMode ? 'print-mode' : ''}`}>
+        <div className={`chart`}>
             {
                 !loading
                 &&

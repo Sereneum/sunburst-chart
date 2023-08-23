@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  max-height: 99vh;
   /*background-color: black;*/
 }
 
@@ -12,6 +13,25 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+*::-webkit-scrollbar {
+  overflow: visible;
+  height: 12px;
+  width: 7px;
+  position: absolute;
+}
+
+*::-webkit-scrollbar-track {
+  overflow: visible;
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  overflow: visible;
+  background-color: #b6b2b2;
+  border-radius: 6px;
+}
+
 
 .main-block {
   display: flex;
@@ -40,7 +60,7 @@ code {
 .chart {
   align-items: center;
   justify-content: center;
-  padding-top: 20px;
+  padding-top: 10px;
 }
 
 .fullscreen-enabled {
@@ -54,12 +74,6 @@ code {
   margin: 20px;
 }
 
-.print-mode {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: auto;
-}
 
 .tooltip {
   font-size: 14px;
