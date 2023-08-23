@@ -13,21 +13,28 @@ import {Context} from "../../index";
 import {observer} from "mobx-react-lite";
 import {jsonDownloader, svgDownloader} from "../../managers/fileManager";
 import ColorSchemeList from "../ColorSchemeList/ColorSchemeList";
+import LinkDistributor from "../LinkDistributor/LinkDistributor";
 
 
 const ChartMenu = observer(({clear, saveLocal, openFullscreenMode, setIsPrintMode}) => {
 
     const [isOpenSlider, setIsOpenSlider] = useState(false)
     const [isOpenColorScheme, setIsOpenColorScheme] = useState(false)
+    // const [isOpenLinkDistributor, setIsOpenLinkDistributor] = useState(false)
+
     const {store} = useContext(Context)
 
-    const openMultiRadiusMenu = () => {
-        setIsOpenSlider(true)
-    }
+    const openMultiRadiusMenu = () =>
+        setIsOpenSlider(true);
 
-    const openColorSchemeList = () => {
-        setIsOpenColorScheme(true)
-    }
+
+    const openColorSchemeList = () =>
+        setIsOpenColorScheme(true);
+
+    //
+    // const openLinkDistributor = () =>
+    //     setIsOpenLinkDistributor(true);
+
 
     const saveCustomRadius = customRadius =>
         store.setCustomRadius(customRadius);
@@ -39,7 +46,7 @@ const ChartMenu = observer(({clear, saveLocal, openFullscreenMode, setIsPrintMod
         setIsPrintMode(true);
         setTimeout(() => window.print(), 100);
 
-        window.addEventListener("afterprint", function(event) {
+        window.addEventListener("afterprint", function (event) {
             setIsPrintMode(false);
         });
 
@@ -56,6 +63,9 @@ const ChartMenu = observer(({clear, saveLocal, openFullscreenMode, setIsPrintMod
                         <MenuItem onClick={() => jsonDownloader(store.chartData)}>
                             Скачать файл
                         </MenuItem>
+                        {/*<MenuItem onClick={openLinkDistributor}>*/}
+                        {/*    Поделится ссылкой с данными*/}
+                        {/*</MenuItem>*/}
                         <MenuItem onClick={clear}>
                             Сменить данные
                         </MenuItem>
@@ -102,6 +112,14 @@ const ChartMenu = observer(({clear, saveLocal, openFullscreenMode, setIsPrintMod
                     saveColorScheme={saveColorScheme}
                 />
             }
+            {/*{*/}
+            {/*    isOpenLinkDistributor*/}
+            {/*    &&*/}
+            {/*    <LinkDistributor*/}
+            {/*        isOpenLinkDistributor={isOpenLinkDistributor}*/}
+            {/*        setIsOpenLinkDistributor={setIsOpenLinkDistributor}*/}
+            {/*    />*/}
+            {/*}*/}
         </>
     );
 });

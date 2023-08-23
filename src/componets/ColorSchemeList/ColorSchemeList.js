@@ -31,22 +31,24 @@ const ColorSchemeList = ({isOpenColorScheme, setIsOpenColorScheme, colorScheme, 
         if (isOpenColorScheme) onOpen()
     }, [isOpenColorScheme])
 
-    const closeModal = () =>
+    const closeModal = () => {
+        setIsOpenColorScheme(false);
         onClose();
+    }
+
 
     const save = () => {
         let key = Object.keys(colorSchemesObject)[Number(radioValue)]
         console.log(key)
         storageManager.colorScheme.save(key)
         saveColorScheme(key)
-        setIsOpenColorScheme(false)
         closeModal()
     }
 
 
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal isOpen={isOpen} onClose={closeModal}>
             <ModalOverlay/>
             <ModalContent>
                 <ModalHeader>Цветовые темы</ModalHeader>
