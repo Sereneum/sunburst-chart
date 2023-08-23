@@ -1,7 +1,7 @@
 import domtoimage from 'dom-to-image';
 
 export const jsonDownloader = data => {
-    const fileName = "file";
+    const fileName = "sunburst-chart";
     const json = JSON.stringify(data, null, 2);
     const blob = new Blob([json], {type: 'application/json'});
     const href = URL.createObjectURL(blob);
