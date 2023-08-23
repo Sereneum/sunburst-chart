@@ -5,7 +5,7 @@ import SunburstChartV4 from "../SunburstChart/SunburstChartV4";
 import {Context} from "../../index";
 import {observer} from "mobx-react-lite";
 
-const SunburstBlock = observer(({isFullscreen=false, parentRef=null}) => {
+const SunburstBlock = observer(({isFullscreen=false, parentRef=null, isPrintMode=false}) => {
 
     const {store} = useContext(Context)
     const [SIZE, setSIZE] = useState(0)
@@ -13,8 +13,9 @@ const SunburstBlock = observer(({isFullscreen=false, parentRef=null}) => {
     const  minSize = (a, b) => a > b ? b : a
     const offset = 35
     useEffect(() => {
-        if(isFullscreen) setSIZE(window.screen.height - 20)
-        else setSIZE(minSize(window.innerWidth / (2/3) - offset, window.innerHeight - offset))
+        if (isFullscreen) setSIZE(window.screen.height - 20)
+        else if (isPrintMode) setSIZE(window.innerHeight - 60)
+        else setSIZE(minSize(window.innerWidth / (2 / 3) - offset, window.innerHeight - offset))
     }, [isFullscreen])
 
 
@@ -28,8 +29,6 @@ const SunburstBlock = observer(({isFullscreen=false, parentRef=null}) => {
             .sort((a, b) => b.value - a.value)
     );
 
-
-
     const [root, setRoot] = useState({
         tree: partition(store.chartData),
         history: []
@@ -37,17 +36,35 @@ const SunburstBlock = observer(({isFullscreen=false, parentRef=null}) => {
 
     const [rootData, setRootData] = useState(partition(store.chartData));
 
-    useEffect(() => {
-        let new_root = partition(store.chartData)
-        setRoot({
-            tree: new_root,
-            history: []
-        })
-    }, [store.chartData])
+    // useEffect(() => {
+    //     let new_root = partition(store.chartData)
+    //     setRoot({
+    //         tree: new_root,
+    //         history: []
+    //     })
+    // }, [store.chartData])
+    //
+    // useEffect(() => {
+    //     setRootData(partition(store.chartData))
+    //     }, [store.chartData])
+
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        setRootData(partition(store.chartData))
-        }, [store.chartData])
+        if(!loading) setLoading(true);
+
+        new Promise((resolve, reject) => {
+            let new_root = partition(store.chartData);
+            // let new_root_data = partition(store.chartData);
+            setRoot({
+                tree: new_root,
+                history: []
+            });
+            setRootData(new_root);
+            resolve(true)
+        })
+            .then(v => setLoading(false))
+    }, [store.chartData])
 
     const fillHistory = treetop => {
         let arr = []
@@ -95,8 +112,10 @@ const SunburstBlock = observer(({isFullscreen=false, parentRef=null}) => {
 
 
     return (
-        <div className={`chart`}>
+        <div className={`chart ${isPrintMode ? 'print-mode' : ''}`}>
             {
+                !loading
+                &&
                 root
                 &&
                 root.tree
@@ -111,6 +130,7 @@ const SunburstBlock = observer(({isFullscreen=false, parentRef=null}) => {
                     chartData={store.chartData}
                     colorScheme={store.colorScheme}
                     rootData={rootData}
+                    isPrintMode={isPrintMode}
                 />
             }
         </div>

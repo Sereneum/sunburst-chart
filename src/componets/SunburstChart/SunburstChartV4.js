@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import '../../index.css'
 import {colorSchemesObject} from "../../managers/colorManager";
 
-const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartData, colorScheme, rootData}) => {
+const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartData, colorScheme, rootData, isPrintMode=false}) => {
     const svgRef = useRef(null);
     const tooltipRef = useRef(null);
     const [viewBox, setViewBox] = React.useState("0,0,0,0");
@@ -12,16 +12,17 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
     const opacity = .6;
     const isCenter = true
 
+    /* произвисти соответствующие действия при клике на path */
     const tryOpenPath = d => {
         let isTryImmersion = true
         if (!d.height) isTryImmersion = false
 
 
-        if(isTryImmersion) {
-            if(immersionState.isImmersion) {
+        if (isTryImmersion) {
+            if (immersionState.isImmersion) {
                 // выбранная вершина - одна из детей текущей => спуск
                 if (root.height - d.height) {
-                    setImmersionState(prev =>  {
+                    setImmersionState(prev => {
                         return {
                             isImmersion: true,
                             parentIndex: prev.parentIndex,
@@ -29,7 +30,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
                         }
                     })
                 } else {
-                    setImmersionState(prev =>  {
+                    setImmersionState(prev => {
                         let isRoot = !(prev.localDepth - 1)
                         return {
                             isImmersion: !isRoot,
@@ -41,7 +42,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
 
 
             } else {
-                if(!d.depth) return
+                if (!d.depth) return
                 let index = findIndex(d);
                 let depth = d.depth;
                 setImmersionState({
@@ -59,6 +60,15 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
 
     const format = d3.format(",d");
 
+    // useEffect(() => {
+    //     const openPrintMode = () => window.print();
+    //     if(isPrintMode) {
+    //         svgRef.current.addEventListener('load', openPrintMode);
+    //     }
+    //
+    //     // return () => svgRef.current.removeEventListener('load', openPrintMode);
+    // }, [isPrintMode])
+
     // const arc = d3
     //     .arc()
     //     .startAngle((d) => d.x0)
@@ -73,23 +83,23 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
         && customRadius.length === root.height + 1
 
     const currentCustomRadius = (i) => {
-        if(isCurrentCustomRadius) return customRadius[i]
+        if (isCurrentCustomRadius) return customRadius[i]
         else return customRadius[i] * (100 / customRadius[root.height])
     }
 
     const currentCustomRadiusReverse = (i) => {
         /* пока не работает xd */
-        if(isCurrentCustomRadius) return customRadius[i]
+        if (isCurrentCustomRadius) return customRadius[i]
         else return customRadius[i] * (100 / customRadius[customRadius.length - root.height - 2])
     }
 
 
     const innerRadius = d => {
         let r = customRadius
-        ?
+            ?
             d.depth ? currentCustomRadius(d.depth - 1) * 0.01 * RADIUS : 0
             :
-        d.y0
+            d.y0
 
         return r ? r : 0
 
@@ -99,7 +109,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
 
     const outerRadius = d => {
         let r = customRadius
-        ?
+            ?
             currentCustomRadius(d.depth) * 0.01 * RADIUS - 1
             :
             d.y1 - 1
@@ -107,7 +117,6 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
         // if(customRadius) return currentCustomRadius(d.depth) * 0.01 * RADIUS - 1
         // else return d.y1 - 1
     }
-
 
 
     // console.log('customRadius: ', customRadius)
@@ -132,7 +141,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
     }, [SIZE]);
 
     const color = d3.scaleOrdinal(
-        d3.quantize(d3.interpolateMagma, root.children.length  + 1)
+        d3.quantize(d3.interpolateMagma, root.children.length + 1)
     )
 
 
@@ -140,7 +149,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
         return d3.scaleLinear()
             .domain([0, countElements])
             .range([parentColor, '#ffffff'])
-            // .range([parentColor, '#ffffff'])
+        // .range([parentColor, '#ffffff'])
     }
 
 
@@ -166,8 +175,11 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
 
 
     useEffect(() => {
-        const parentColors = d3.quantize(getColorSchemeFunc(), rootData.children.length)
-        const arr = []
+        console.log('rootData', rootData);
+        const parentColors = d3.quantize(getColorSchemeFunc(), rootData.children.length + 1).splice(1);
+        // const parentColors = d3.quantize(getColorSchemeFunc(), rootData.children.length);
+        parentColors.reverse();
+        const arr = [];
         for (let i = 0; i < parentColors.length; ++i) {
             const colorScale = createColorScale(parentColors[i], rootData.children[i].height + 1)
             arr.push([])
@@ -175,9 +187,9 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
                 arr[i].push(colorScale(j));
         }
 
-
+        console.log('colors -> ', arr)
         setColors(arr);
-    }, [chartData, colorScheme])
+    }, [rootData, colorScheme])
 
     // rootData
 
@@ -185,7 +197,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
         let ind = -1;
         while (d.depth > 1) d = d.parent;
         d.parent.children.forEach((node, index) => {
-            if(node === d) ind = index
+            if (node === d) ind = index
         })
         return ind
     }
@@ -213,7 +225,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
         if (!d.depth) return
 
         const x = (((d.x0 + d.x1) / 2) * 180) / Math.PI;
-        const y = (innerRadius(d)  + outerRadius(d) + 1) / 2
+        const y = (innerRadius(d) + outerRadius(d) + 1) / 2
         return `rotate(${x - 90}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
     };
 
@@ -314,7 +326,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
                     const rotate = (Math.PI * convR(rotateGr)) / 180
 
                     const conv90 = rot => {
-                        if(Math.abs(rot) === 90 || Math.abs(rot) === 270) return textBHeight
+                        if (Math.abs(rot) === 90 || Math.abs(rot) === 270) return textBHeight
                         else return textBWidth
                     }
 
@@ -324,7 +336,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
                         / (Math.pow(Math.cos(rotate), 2) - Math.pow(Math.sin(rotate), 2))
                     let realWidth = rotateGr % 90 ? y : conv90(rotateGr);
 
-                    if(!(convR(rotateGr) % 45) && (convR(rotateGr) % 90))
+                    if (!(convR(rotateGr) % 45) && (convR(rotateGr) % 90))
                         realWidth = textBWidth * Math.sqrt(2);
 
                     // if(this.innerHTML === 'Southern Asia' || this.innerHTML === 'Eastern Asia' || this.innerHTML == 'SEA_1')
@@ -349,7 +361,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
                         let one = realWidth / text.length
                         let l = segmentRadius / one
                         this.innerHTML = text.slice(0, l - 2) + '..'
-                        if(this.innerHTML === '..') this.innerHTML = ''
+                        if (this.innerHTML === '..') this.innerHTML = ''
                     }
 
 

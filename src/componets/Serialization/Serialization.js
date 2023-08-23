@@ -32,22 +32,29 @@ const Serialization = () => {
             prevList = prevList.slice(0, -1)
         }
 
-        console.log('modifiedData', modifiedData)
-
-        // return clone
+        // console.log('modifiedData', modifiedData)
+        // console.log(current, current.children.length )
 
         if (modifiedData.type === 'rename')
             current.children[index].name = modifiedData.value
 
-        if (modifiedData.type === 'delete')
-            current.children.splice(index, 1)
+        if (modifiedData.type === 'delete') {
+            if(current.children.length === 1) {
+                current.value = current.children[0].value
+                delete current.children
+            } else current.children.splice(index, 1)
+        }
 
-        if(modifiedData.type === 'add')
+
+        if (modifiedData.type === 'add')
             current.children[index].children
                 ?
                 current.children[index].children.push({name: modifiedData.value, value: 1})
                 :
-                current.children[index] = {name: current.children[index].name, children: [{name: modifiedData.value, value: 1}]}
+                current.children[index] = {
+                    name: current.children[index].name,
+                    children: [{name: modifiedData.value, value: 1}]
+                }
 
 
         return clone
@@ -55,6 +62,7 @@ const Serialization = () => {
 
     const changeData = ({deep, index, prev, modifiedData}) => {
         let clone = executeOperation(deep, prev, index, modifiedData)
+        // console.log('clone: ', clone)
         store.setChartData(clone)
     }
 

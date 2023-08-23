@@ -7,7 +7,7 @@ import NullData from "./componets/NullData/NullData";
 import {FullScreen, useFullScreenHandle} from "react-full-screen";
 import SunburstChartFullscreen from "./componets/SunburstChart/SunburstChartFullscreen";
 import {Context} from "./index";
-import { observer } from 'mobx-react-lite'
+import {observer} from 'mobx-react-lite'
 import {storageManager} from "./managers/storageManager";
 import {sizeManager} from "./managers/sizeManager";
 
@@ -30,12 +30,13 @@ import {sizeManager} from "./managers/sizeManager";
 */
 
 
-const  App = observer(() => {
+const App = observer(() => {
 
     const {store} = useContext(Context)
 
     const [loading, setLoading] = useState(true)
     const [isFullscreen, setIsFullscreen] = useState(false)
+    const [isPrintMode, setIsPrintMode] = useState(false);
 
     const refChartBlock = useRef(null)
     const handle = useFullScreenHandle()
@@ -111,14 +112,13 @@ const  App = observer(() => {
     }, [handle.active])
 
 
-
     useEffect(() => {
         let resize = sizeManager({
             chartData: store.chartData,
             customRadius: store.customRadius
         })
 
-        if(resize.isResize) {
+        if (resize.isResize) {
             console.log('resize.r -> ', resize.r)
             store.setCustomRadius(resize.r)
             storageManager.customRadius.save(resize.r)
@@ -134,24 +134,35 @@ const  App = observer(() => {
             {
                 store.chartData === null
                     ?
-                    <NullData />
+                    <NullData/>
                     :
                     <>
+
                         <div className="sunburst-chart-block" ref={refChartBlock}>
                             <SunburstBlock parentRef={refChartBlock}/>
                         </div>
+                        {
+                            !isPrintMode
+                                ?
+                                <>
+                                    <div className="control-block">
+                                        <ChartMenu
+                                            clear={clear}
+                                            saveLocal={saveLocal}
+                                            openFullscreenMode={openFullscreenMode}
+                                            setIsPrintMode={setIsPrintMode}
+                                        />
+                                        <Serialization/>
+                                    </div>
+                                    <FullScreen handle={handle}>
+                                        <SunburstChartFullscreen isView={handle.active}/>
+                                    </FullScreen>
+                                </>
+                                :
+                                <></>
+                        }
 
-                        <div className="control-block">
-                            <ChartMenu
-                                clear={clear}
-                                saveLocal={saveLocal}
-                                openFullscreenMode={openFullscreenMode}
-                            />
-                            <Serialization />
-                        </div>
-                        <FullScreen handle={handle}>
-                            <SunburstChartFullscreen isView={handle.active}/>
-                        </FullScreen>
+
                     </>
             }
         </div>
@@ -159,3 +170,30 @@ const  App = observer(() => {
 })
 
 export default App;
+
+// {
+//     isPrintMode
+//         ?
+//         <>
+//             <SunburstBlock parentRef={refChartBlock} isPrintMode={isPrintMode}/>
+//         </>
+//         :
+//         <>
+//             <div className="sunburst-chart-block" ref={refChartBlock}>
+//                 <SunburstBlock parentRef={refChartBlock}/>
+//             </div>
+//
+//             <div className="control-block">
+//                 <ChartMenu
+//                     clear={clear}
+//                     saveLocal={saveLocal}
+//                     openFullscreenMode={openFullscreenMode}
+//                     setIsPrintMode={setIsPrintMode}
+//                 />
+//                 <Serialization/>
+//             </div>
+//             <FullScreen handle={handle}>
+//                 <SunburstChartFullscreen isView={handle.active}/>
+//             </FullScreen>
+//         </>
+// }

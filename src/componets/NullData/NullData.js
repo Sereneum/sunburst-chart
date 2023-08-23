@@ -60,9 +60,9 @@ const NullData = () => {
                                 <MenuItem onClick={fileLoading}>
                                     Заргузить .json файл
                                 </MenuItem>
-                                <MenuItem>
-                                    Загрузить по ссылке
-                                </MenuItem>
+                                {/*<MenuItem>*/}
+                                {/*    Загрузить по ссылке*/}
+                                {/*</MenuItem>*/}
                                 <MenuItem onClick={voidFile}>
                                     Ручной ввод
                                 </MenuItem>

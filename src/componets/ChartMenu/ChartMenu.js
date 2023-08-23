@@ -15,7 +15,7 @@ import {jsonDownloader, svgDownloader} from "../../managers/fileManager";
 import ColorSchemeList from "../ColorSchemeList/ColorSchemeList";
 
 
-const ChartMenu = observer(({clear, saveLocal, openFullscreenMode}) => {
+const ChartMenu = observer(({clear, saveLocal, openFullscreenMode, setIsPrintMode}) => {
 
     const [isOpenSlider, setIsOpenSlider] = useState(false)
     const [isOpenColorScheme, setIsOpenColorScheme] = useState(false)
@@ -35,7 +35,15 @@ const ChartMenu = observer(({clear, saveLocal, openFullscreenMode}) => {
     const saveColorScheme = colorScheme =>
         store.setColorScheme(colorScheme)
 
+    const openPrintWindow = () => {
+        setIsPrintMode(true);
+        setTimeout(() => window.print(), 100);
 
+        window.addEventListener("afterprint", function(event) {
+            setIsPrintMode(false);
+        });
+
+    }
 
     return (
         <>
@@ -59,7 +67,7 @@ const ChartMenu = observer(({clear, saveLocal, openFullscreenMode}) => {
                         >
                             Изменить размеры
                         </MenuItem>
-                        <MenuItem>
+                        <MenuItem onClick={openPrintWindow}>
                             Печать
                         </MenuItem>
                         {/*<MenuItem onClick={svgDownloader}>*/}

@@ -54,6 +54,13 @@ code {
   margin: 20px;
 }
 
+.print-mode {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+}
+
 .tooltip {
   font-size: 14px;
   position: absolute;
