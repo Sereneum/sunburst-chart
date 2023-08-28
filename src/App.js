@@ -68,7 +68,8 @@ const App = observer(() => {
     useEffect(() => {
         try {
             let colorScheme = storageManager.colorScheme.get()
-            store.setColorScheme(colorScheme)
+            if(colorScheme) store.setColorScheme(colorScheme)
+            else store.setColorScheme('igirgi1')
         } catch (e) {
             console.log('ОШИБКА ЧТЕНИЯ ЦВЕТОВОЙ ТЕМЫ ИЗ ЛОКАЛЬНОГО ХРАНИЛИЩА')
         }

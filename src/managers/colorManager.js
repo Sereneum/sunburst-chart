@@ -1,7 +1,121 @@
 import * as d3 from 'd3'
 
 
+const strToRgb = str => str.slice(4, str.length - 1).split(', ')
+
+const middleColor = (c1, c2) => {
+    let c1v = strToRgb(c1);
+    let c2v = strToRgb(c2);
+    let conv = (i, j) => Math.floor((i + j) / 2);
+    return `rgb(${conv(c1v[0], c2v[0])}, ${conv(c1v[1], c2v[1])}, ${conv(c1v[1], c2v[1])})`;
+}
+
+const createCompanyScheme = (list, k) => {
+    if (k < list.length) return list.slice(0, -1 * (list.length - k));
+    if (k === list.length) return list;
+    if (k === 1) return list[0];
+    const n = list.length, m = n - 1, em = Math.floor((k - n) / m);
+    let s = (k - n) % m;
+    let r = [];
+    r.push(list[0]);
+    // console.log('COUNT = ', k);
+    // console.log('em = ', em);
+    // console.log('s = ', s);
+
+    for (let i = 0; i < n - 1; ++i) {
+        // console.log('i = ', i);
+        let offset = em + 2;
+        if (s > 0) {
+            offset += 1;
+            s -= 1;
+        }
+        const inter = d3.interpolate(list[i], list[i + 1]);
+        for (let j = 1; j < offset - 1; ++j) {
+            r.push(inter(j / offset));
+            // console.log('    j = ', j);
+        }
+
+
+        r.push(list[i + 1]);
+    }
+    return r;
+}
+
+
+export const cls = (list, n) => {
+    return createCompanyScheme(list, n);
+}
+
+const companyColors = [
+    'rgb(246, 209, 6)',
+    'rgb(239, 107, 1)',
+    'rgb(250, 157, 16)',
+    'rgb(249, 189, 39)',
+    'rgb(194, 9, 55)',
+    'rgb(192, 0, 0)',
+    'rgb(61, 70, 74)',
+    'rgb(107, 107, 107)',
+    'rgb(178, 178, 178)',
+    'rgb(186, 186, 186)',
+    'rgb(226, 226, 226)',
+    'rgb(71, 91, 121)',
+    'rgb(105, 133, 175)',
+    'rgb(149, 160, 178)',
+]
+
+export const customColorSchemes = {
+    "igirgi1": {
+        list: ['rgb(246, 209, 6)', 'rgb(249, 189, 39)', 'rgb(250, 157, 16)', 'rgb(239, 107, 1)'],
+        func: function (n) {
+            return cls(customColorSchemes.igirgi1.list, n);
+        }
+    },
+    "igirgi2": {
+        list: ['rgb(246, 209, 6)', 'rgb(249, 189, 39)', 'rgb(250, 157, 16)', 'rgb(239, 107, 1)', 'rgb(194, 9, 55)', 'rgb(192, 0, 0)'],
+        func: function (n) {
+            return cls(customColorSchemes.igirgi2.list, n);
+        }
+    },
+    "igirgi3": {
+        list: ['rgb(226, 226, 226)', 'rgb(149, 160, 178)', 'rgb(105, 133, 175)', 'rgb(71, 91, 121)'],
+        func: function (n) {
+            return cls(customColorSchemes.igirgi3.list, n);
+        }
+    },
+    "igirgi4": {
+        list: [ 'rgb(186, 186, 186)', 'rgb(178, 178, 178)', 'rgb(107, 107, 107)', 'rgb(61, 70, 74)'],
+        func: function (n) {
+            return cls(customColorSchemes.igirgi4.list, n);
+        }
+    },
+}
+// list: ['rgb(226, 226, 226)', 'rgb(178, 178, 178)', 'rgb(149, 160, 178)', 'rgb(71, 91, 121)',],
+
 export const colorSchemesObject = {
+    "igirgi1": {
+        name: "igirgi1",
+        description: "Цветовая тема ИГиРГИ №1.",
+        func: customColorSchemes.igirgi1.func,
+        isCustomColorScheme: true
+    },
+    "igirgi2": {
+        name: "igirgi2",
+        description: "Цветовая тема ИГиРГИ №2.",
+        func: customColorSchemes.igirgi2.func,
+        isCustomColorScheme: true
+    },
+    "igirgi3": {
+        name: "igirgi3",
+        description: "Цветовая тема ИГиРГИ №3.",
+        func: customColorSchemes.igirgi3.func,
+        isCustomColorScheme: true
+    },
+    "igirgi4": {
+        name: "igirgi4",
+        description: "Цветовая тема ИГиРГИ №4.",
+        func: customColorSchemes.igirgi4.func,
+        isCustomColorScheme: true
+    },
     "interpolateViridis": {
         name: "interpolateViridis",
         description: "Цветовая схема Viridis.",
@@ -17,6 +131,17 @@ export const colorSchemesObject = {
         description: "Цветовая схема Magma.",
         func: d3.interpolateMagma
     },
+    "interpolateSpectral": {
+        name: "interpolateSpectral",
+        description: 'Цветовая схема Spectral.',
+        func: d3.interpolateSpectral
+    },
+    "interpolateOranges": {
+        name: "Oranges",
+        description: 'Цветовая схема Oranges.',
+        func: d3.interpolateOranges
+    },
+
     "interpolatePlasma": {
         name: "interpolatePlasma",
         description: "Цветовая схема Plasma.",

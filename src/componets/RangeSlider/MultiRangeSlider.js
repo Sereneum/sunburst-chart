@@ -91,7 +91,7 @@ const MultiRangeSlider = ({isOpenSlider, setOpenSlider, chartData, customRadius,
 
         let marks = {}
         for (let i = 0; i < values.length; ++i)
-            marks[values[i]] = <span style={{whiteSpace: 'pre-line'}}>{`segment: ${i}\n value: ${Math.round(values[i], 0)}%`}</span>
+            marks[values[i]] = <span style={{whiteSpace: 'pre-line'}}>{`уровень: ${i}\n размер: ${Math.round(values[i], 0)}%`}</span>
         return marks
     }
 

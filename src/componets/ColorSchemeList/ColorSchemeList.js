@@ -14,6 +14,7 @@ import {storageManager} from "../../managers/storageManager";
 
 const ColorSchemeList = ({isOpenColorScheme, setIsOpenColorScheme, colorScheme, saveColorScheme}) => {
     const {isOpen, onOpen, onClose} = useDisclosure();
+    console.log('colorScheme', colorScheme)
     const init = () => {
         try {
             let index = Object.keys(colorSchemesObject).indexOf(colorScheme)

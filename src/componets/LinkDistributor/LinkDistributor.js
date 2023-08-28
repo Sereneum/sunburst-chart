@@ -13,7 +13,6 @@ import {
 import link_guide_1 from '../../materials/link_guide_1.png'
 
 
-
 const LinkDistributor = ({isOpenLinkDistributor, setIsOpenLinkDistributor}) => {
     const {isOpen, onOpen, onClose} = useDisclosure();
 

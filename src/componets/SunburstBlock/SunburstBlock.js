@@ -16,7 +16,6 @@ const SunburstBlock = observer(({isFullscreen=false, parentRef=null, isPrintMode
         if (isFullscreen) setSIZE(window.screen.height - 20)
         else if (isPrintMode) setSIZE(window.innerHeight - 80)
         else setSIZE(minSize(window.innerWidth / (2 / 3) - offset, window.innerHeight - offset))
-        console.log('SIZE', SIZE)
     }, [isFullscreen, isPrintMode])
 
 

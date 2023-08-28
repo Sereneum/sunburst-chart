@@ -35,7 +35,7 @@ const NullData = () => {
     }
 
     const voidFile = () => {
-        load({name: "root", value: 1})
+        load({name: "Данные", value: 1})
     }
 
     return (

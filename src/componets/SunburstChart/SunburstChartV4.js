@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import * as d3 from "d3";
 import '../../index.css'
-import {colorSchemesObject} from "../../managers/colorManager";
+import {colorSchemesObject, companyColorsScheme, getColors} from "../../managers/colorManager";
 
 const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartData, colorScheme, rootData, isPrintMode=false}) => {
     const svgRef = useRef(null);
@@ -9,7 +9,7 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
     const [viewBox, setViewBox] = React.useState("0,0,0,0");
 
     const RADIUS = SIZE / 2;
-    const opacity = .6;
+    const opacity = 1.0;
     const isCenter = true
 
     /* произвисти соответствующие действия при клике на path */
@@ -60,14 +60,6 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
 
     const format = d3.format(",d");
 
-    // useEffect(() => {
-    //     const openPrintMode = () => window.print();
-    //     if(isPrintMode) {
-    //         svgRef.current.addEventListener('load', openPrintMode);
-    //     }
-    //
-    //     // return () => svgRef.current.removeEventListener('load', openPrintMode);
-    // }, [isPrintMode])
 
     // const arc = d3
     //     .arc()
@@ -173,25 +165,34 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
         }
     }
 
-
     useEffect(() => {
-        console.log('rootData', rootData);
-        const parentColors = d3.quantize(getColorSchemeFunc(), rootData.children.length + 1).splice(1);
-        // const parentColors = d3.quantize(getColorSchemeFunc(), rootData.children.length);
-        parentColors.reverse();
+        const childrenLen = rootData.children.length;
+        // const parentColors = companyColorsScheme.scheme_2.func(childrenLen);
+        // const parentColors = d3.quantize(getColorSchemeFunc(), rootData.children.length + 1).splice(1);
+        const parentColors =
+            (
+                'isCustomColorScheme' in colorSchemesObject[colorScheme]
+                &&
+                colorSchemesObject[colorScheme].isCustomColorScheme
+            )
+                ?
+                getColorSchemeFunc()(childrenLen)
+                :
+                d3.quantize(getColorSchemeFunc(), rootData.children.length + 1).splice(1);
+
+
         const arr = [];
-        for (let i = 0; i < parentColors.length; ++i) {
+        for (let i = 0; i < childrenLen; ++i) {
             const colorScale = createColorScale(parentColors[i], rootData.children[i].height + 1)
             arr.push([])
             for (let j = 0; j < rootData.children[i].height + 1; ++j)
                 arr[i].push(colorScale(j));
         }
 
-        console.log('colors -> ', arr)
+        // console.log('colors -> ', arr)
         setColors(arr);
-    }, [rootData, colorScheme])
+    }, [rootData, colorScheme]);
 
-    // rootData
 
     const findIndex = d => {
         let ind = -1;
@@ -206,12 +207,14 @@ const SunburstChart = ({root, SIZE, treetopRepositioning, customRadius, chartDat
         if (!d.depth && !immersionState.isImmersion) return 'rgb(255, 255, 255)'
         const childDepth = d.depth;
         const childHeight = d.height;
+
         try {
 
             if (immersionState.isImmersion) {
                 return colors[immersionState.parentIndex][immersionState.localDepth + childDepth - 1]
             } else {
                 const parentIndex = findIndex(d);
+                // console.log('parentIndex__childDepth-1', parentIndex, childDepth - 1)
                 return colors[parentIndex][childDepth - 1];
             }
 
