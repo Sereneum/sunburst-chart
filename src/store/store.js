@@ -1,6 +1,12 @@
 import {makeAutoObservable} from "mobx";
 import { toJS} from 'mobx';
 
+
+/* Глобальное хранилище приложения:
+    chartData -> Данные диаграммы.
+    customRadius -> Размеры сигментов
+    colorScheme -> Текущая цветовая схема
+ */
 export default class Store {
     constructor() {
         this._chartData = null
@@ -10,7 +16,6 @@ export default class Store {
     }
 
     setChartData(chartData) {
-        // this._chartData =  JSON.parse(JSON.stringify(chartData))
         this._chartData = chartData
     }
 

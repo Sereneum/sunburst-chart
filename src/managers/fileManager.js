@@ -1,5 +1,4 @@
-import domtoimage from 'dom-to-image';
-
+/* сохраняет .json файл */
 export const jsonDownloader = data => {
     const fileName = "sunburst-chart";
     const json = JSON.stringify(data, null, 2);
@@ -14,16 +13,4 @@ export const jsonDownloader = data => {
 
     document.body.removeChild(link);
     URL.revokeObjectURL(href);
-}
-
-export const svgDownloader = () => {
-    const node = document.getElementById('node');
-
-    domtoimage.toJpeg(node, { quality: 0.95 })
-        .then(function (dataUrl) {
-            let link = document.createElement('a');
-            link.download = 'my-image-name.jpeg';
-            link.href = dataUrl;
-            link.click();
-        });
 }

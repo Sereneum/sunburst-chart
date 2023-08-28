@@ -29,11 +29,13 @@ const NullData = () => {
         setMode('file')
     }
 
+    /* Сохраняет данные диаграммы */
     const load = data => {
         storageManager.chartData.save(data)
         store.setChartData(data)
     }
 
+    /* Создает пустую диаграмму */
     const voidFile = () => {
         load({name: "Данные", value: 1})
     }
@@ -60,9 +62,6 @@ const NullData = () => {
                                 <MenuItem onClick={fileLoading}>
                                     Заргузить .json файл
                                 </MenuItem>
-                                {/*<MenuItem>*/}
-                                {/*    Загрузить по ссылке*/}
-                                {/*</MenuItem>*/}
                                 <MenuItem onClick={voidFile}>
                                     Ручной ввод
                                 </MenuItem>

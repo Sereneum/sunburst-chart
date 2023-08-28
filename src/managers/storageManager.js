@@ -1,3 +1,6 @@
+/* Объект для работы с локальным хранилищем.
+   Для каждого key можно сохранять, получать и очищать данные.
+ */
 export const storageManager = {
     chartData: {
         key: 'chart-data',

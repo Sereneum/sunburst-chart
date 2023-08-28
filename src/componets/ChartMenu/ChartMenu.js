@@ -11,9 +11,9 @@ import {ChevronDownIcon} from "@chakra-ui/icons";
 import MultiRangeSlider from "../RangeSlider/MultiRangeSlider";
 import {Context} from "../../index";
 import {observer} from "mobx-react-lite";
-import {jsonDownloader, svgDownloader} from "../../managers/fileManager";
+import {jsonDownloader} from "../../managers/fileManager";
 import ColorSchemeList from "../ColorSchemeList/ColorSchemeList";
-import LinkDistributor from "../LinkDistributor/LinkDistributor";
+
 
 
 const ChartMenu = observer(({clear, saveLocal, openFullscreenMode, setIsPrintMode}) => {
@@ -30,10 +30,6 @@ const ChartMenu = observer(({clear, saveLocal, openFullscreenMode, setIsPrintMod
 
     const openColorSchemeList = () =>
         setIsOpenColorScheme(true);
-
-    //
-    // const openLinkDistributor = () =>
-    //     setIsOpenLinkDistributor(true);
 
 
     const saveCustomRadius = customRadius =>

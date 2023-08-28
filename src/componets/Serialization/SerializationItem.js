@@ -7,6 +7,7 @@ import {DotsSixVertical} from "@phosphor-icons/react";
 const SerializationItem = ({item, deep, index, prev = [], changeData}) => {
     const prevForChild = [...prev, {deep, index}]
 
+    /* обращаемся к состоянию данных диаграммы и меняем название сигмента */
     const changeName = name => {
         changeData({
             deep, index, prev, modifiedData: {
@@ -16,6 +17,7 @@ const SerializationItem = ({item, deep, index, prev = [], changeData}) => {
         })
     }
 
+    /* обращаемся к состоянию данных диаграммы и удаляем сигмент (и его детей) */
     const deleteFamily = () => {
         changeData({
             deep, index, prev, modifiedData: {
@@ -24,6 +26,7 @@ const SerializationItem = ({item, deep, index, prev = [], changeData}) => {
         })
     }
 
+    /* обращаемся к состоянию данных диаграммы и добавляем сигмент */
     const addChild = name => {
         changeData({
             deep, index, prev, modifiedData: {
@@ -32,6 +35,7 @@ const SerializationItem = ({item, deep, index, prev = [], changeData}) => {
             }
         })
     }
+
 
 
     return (
@@ -61,24 +65,6 @@ const SerializationItem = ({item, deep, index, prev = [], changeData}) => {
         </li>
     )
 
-    // return (
-    //     <li>
-    //         <SerializationItemControl
-    //             item={item}
-    //             deep={0}
-    //             index={0}
-    //             prev={prevForChild}
-    //             changeData={changeData}
-    //         />
-    //         <SerializationItemChildren
-    //             children={item?.children}
-    //             deep={0}
-    //             index={0}
-    //             prev={prevForChild}
-    //             changeData={changeData}
-    //         />
-    //     </li>
-    // );
 };
 
 export default SerializationItem;

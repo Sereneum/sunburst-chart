@@ -1,3 +1,4 @@
+/* Возращает глубину текущего состояния диаграммы */
 const funcDepth = (root, depth=0, maxDepth=0) => {
     if (!('children' in root)) return depth
 
@@ -9,6 +10,7 @@ const funcDepth = (root, depth=0, maxDepth=0) => {
     return maxDepth
 }
 
+/* Распределение размеров при понижении уровня диаграммы */
 const lowerFunc = (list, diff=1) => {
     let r = []
     for(let i = 0; i < list.length - diff; ++i) {
@@ -16,12 +18,10 @@ const lowerFunc = (list, diff=1) => {
             list[i] * (100 / list[list.length - diff - 1])
         )
     }
-
-    // console.log('before', list)
-    // console.log('lowerFunc', r)
     return r
 }
 
+/* Распределение размеров при повышении уровня диаграммы */
 const upperFunc = (list, diff=1) => {
     let r = [], rn = 1 / (list.length + diff)
     for(let i = 0; i < list.length; ++i) {
@@ -30,12 +30,10 @@ const upperFunc = (list, diff=1) => {
         )
     }
     r.push(100)
-    // console.log('before', list)
-    // console.log('upperFunc', r)
     return r
 }
 
-
+/* Функция распределения размеров сигментов при понижении/повышении уровня всей диаграммы */
 export const sizeManager = ({chartData, customRadius}) => {
     if(chartData === null || customRadius === null) return {isResize: false}
     let depth = funcDepth(chartData) + 1;

@@ -11,38 +11,20 @@ import {observer} from 'mobx-react-lite'
 import {storageManager} from "./managers/storageManager";
 import {sizeManager} from "./managers/sizeManager";
 
-/*
-    (1) Кнопка удаления
-    (1) Реализация удаления элемента и его детей xd
-    (0) Кнопка создания нового элемента
-    (0) Перемещение элементов
-    (0) Пользовательсая настройка цветов
-    (0) Кнопка смены цвета
-    (0) Реализация смены цвета
-    (0) Перенос текста
-    (0) Выделение и подсказки
-    (1) Выбор новой верхушки
-    (1) Анимации
-    (0) Загрузка и сохранение файлов
-    (0) UI
-    (0) Размеры
-    (0) Ссылка на файл из облака в url
-*/
-
-
 const App = observer(() => {
 
+    // Глобальное хранилице приложение (mobx)
     const {store} = useContext(Context)
 
-    const [loading, setLoading] = useState(true)
-    const [isFullscreen, setIsFullscreen] = useState(false)
+    const [loading, setLoading] = useState(true);
+    const [isFullscreen, setIsFullscreen] = useState(false);
     const [isPrintMode, setIsPrintMode] = useState(false);
 
     const refChartBlock = useRef(null)
     const handle = useFullScreenHandle()
 
 
-    // chartData
+    // Подгрузка данных об диаграмме
     useEffect(() => {
         try {
             let chartData = storageManager.chartData.get()
@@ -54,7 +36,7 @@ const App = observer(() => {
         }
     }, [])
 
-    // customRadius
+    // Подгрузка размеров сигментов
     useEffect(() => {
         try {
             let customRadius = storageManager.customRadius.get()
@@ -64,7 +46,7 @@ const App = observer(() => {
         }
     }, [])
 
-    // colorScheme
+    // Подгрузка текущей цветовой схемы
     useEffect(() => {
         try {
             let colorScheme = storageManager.colorScheme.get()
@@ -76,6 +58,7 @@ const App = observer(() => {
     }, [])
 
 
+    // Создает событие сохранения данных в локальное хранилище при выходе из приложения.
     useEffect(() => {
         const handleBeforeUnload = (event) => {
             saveLocal();
@@ -98,21 +81,25 @@ const App = observer(() => {
         store.setCustomRadius(null)
     }
 
+    /* сохраняет данные диаграммы в локал. хранилище */
     const saveLocal = () => {
         storageManager.chartData.save(store.chartData)
     }
 
+    /* Открывает полноэкранный режим */
     const openFullscreenMode = () => {
         setIsFullscreen(true)
-        handle.enter().then(r => console.log(r))
+        handle.enter().then(r => {})
     }
 
+    /* При выходе из fullscreen -> изменить состояние приложения */
     useEffect(() => {
         if (handle.active && isFullscreen)
             setIsFullscreen(false)
     }, [handle.active])
 
 
+    // Распределение размеров сигментов.
     useEffect(() => {
         let resize = sizeManager({
             chartData: store.chartData,
@@ -130,12 +117,13 @@ const App = observer(() => {
     if (loading) return <></>
 
 
+
     return (
         <div className="main-block">
             {
                 store.chartData === null
                     ?
-                    <NullData/>
+                    <NullData/> // при отсутствии данных
                     :
                     <>
 
@@ -143,7 +131,7 @@ const App = observer(() => {
                             <SunburstBlock parentRef={refChartBlock}/>
                         </div>
                         {
-                            !isPrintMode
+                            !isPrintMode // во время режима печать остается только диаграмма
                                 ?
                                 <>
                                     <div className="control-block">
@@ -171,30 +159,3 @@ const App = observer(() => {
 })
 
 export default App;
-
-// {
-//     isPrintMode
-//         ?
-//         <>
-//             <SunburstBlock parentRef={refChartBlock} isPrintMode={isPrintMode}/>
-//         </>
-//         :
-//         <>
-//             <div className="sunburst-chart-block" ref={refChartBlock}>
-//                 <SunburstBlock parentRef={refChartBlock}/>
-//             </div>
-//
-//             <div className="control-block">
-//                 <ChartMenu
-//                     clear={clear}
-//                     saveLocal={saveLocal}
-//                     openFullscreenMode={openFullscreenMode}
-//                     setIsPrintMode={setIsPrintMode}
-//                 />
-//                 <Serialization/>
-//             </div>
-//             <FullScreen handle={handle}>
-//                 <SunburstChartFullscreen isView={handle.active}/>
-//             </FullScreen>
-//         </>
-// }

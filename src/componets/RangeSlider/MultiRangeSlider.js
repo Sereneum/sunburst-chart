@@ -20,6 +20,7 @@ import {WarningOctagon} from "@phosphor-icons/react";
 
 const MultiRangeSlider = ({isOpenSlider, setOpenSlider, chartData, customRadius, setCustomRadius}) => {
 
+    // расчет глубины сигментов = кол-во ползунков
     const funcDepth = (root, depth, mxd) => {
         if (!('children' in root)) return depth
 
@@ -35,6 +36,7 @@ const MultiRangeSlider = ({isOpenSlider, setOpenSlider, chartData, customRadius,
     const mdx = funcDepth(chartData, 0, 0)
     // console.log('mdx', mdx)
 
+    /* ровное распределение размеров */
     const createValues = mdx => {
         let arr = [100 / (mdx + 1)]
         for (let i = 1; i < mdx + 1; ++i)
@@ -58,10 +60,9 @@ const MultiRangeSlider = ({isOpenSlider, setOpenSlider, chartData, customRadius,
         onClose()
     }
 
-
+    /* состояние размеров */
     const [sliderValues, setSliderValues] = useState(customRadius ? customRadius : createValues(mdx));
 
-    // console.log('sliderValues = ', sliderValues)
 
 
     /* случай, когда данные обнуляются */
@@ -70,13 +71,6 @@ const MultiRangeSlider = ({isOpenSlider, setOpenSlider, chartData, customRadius,
             setSliderValues(createValues(mdx))
     }, [customRadius])
 
-    // useEffect(() => {
-    //     if(customRadius === null) return
-    //
-    //     if(chartData !== null && chartData.length !== sliderValues?.length)
-    //         setSliderValues(createValues(mdx))
-    //
-    // }, [chartData])
 
 
     /* двигаем ползунок */
@@ -87,14 +81,15 @@ const MultiRangeSlider = ({isOpenSlider, setOpenSlider, chartData, customRadius,
     }
 
 
+    /* подсказки размеров */
     const creatMarks = values => {
-
         let marks = {}
         for (let i = 0; i < values.length; ++i)
             marks[values[i]] = <span style={{whiteSpace: 'pre-line'}}>{`уровень: ${i}\n размер: ${Math.round(values[i], 0)}%`}</span>
         return marks
     }
 
+    /* показывем, что нельзя двигать полсудний ползунок */
     const createStyles = len => {
         let styles = new Array(len)
 

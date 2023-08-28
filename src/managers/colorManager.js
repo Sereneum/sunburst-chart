@@ -9,7 +9,11 @@ const middleColor = (c1, c2) => {
     let conv = (i, j) => Math.floor((i + j) / 2);
     return `rgb(${conv(c1v[0], c2v[0])}, ${conv(c1v[1], c2v[1])}, ${conv(c1v[1], c2v[1])})`;
 }
-
+/*
+    Создание кастомной цветовой схемы:
+    сначала выбираются цвета из списка,
+    и далее равномерно заполняются цвета между цветами из списка.
+ */
 const createCompanyScheme = (list, k) => {
     if (k < list.length) return list.slice(0, -1 * (list.length - k));
     if (k === list.length) return list;
@@ -18,12 +22,9 @@ const createCompanyScheme = (list, k) => {
     let s = (k - n) % m;
     let r = [];
     r.push(list[0]);
-    // console.log('COUNT = ', k);
-    // console.log('em = ', em);
-    // console.log('s = ', s);
+
 
     for (let i = 0; i < n - 1; ++i) {
-        // console.log('i = ', i);
         let offset = em + 2;
         if (s > 0) {
             offset += 1;
@@ -32,20 +33,14 @@ const createCompanyScheme = (list, k) => {
         const inter = d3.interpolate(list[i], list[i + 1]);
         for (let j = 1; j < offset - 1; ++j) {
             r.push(inter(j / offset));
-            // console.log('    j = ', j);
         }
-
-
         r.push(list[i + 1]);
     }
     return r;
 }
 
 
-export const cls = (list, n) => {
-    return createCompanyScheme(list, n);
-}
-
+/* Список цветов компании. */
 const companyColors = [
     'rgb(246, 209, 6)',
     'rgb(239, 107, 1)',
@@ -63,34 +58,41 @@ const companyColors = [
     'rgb(149, 160, 178)',
 ]
 
+/*
+    list заполяется цветами, и далее его нужно передать в .func
+ */
 export const customColorSchemes = {
     "igirgi1": {
         list: ['rgb(246, 209, 6)', 'rgb(249, 189, 39)', 'rgb(250, 157, 16)', 'rgb(239, 107, 1)'],
         func: function (n) {
-            return cls(customColorSchemes.igirgi1.list, n);
+            return createCompanyScheme(customColorSchemes.igirgi1.list, n);
         }
     },
     "igirgi2": {
         list: ['rgb(246, 209, 6)', 'rgb(249, 189, 39)', 'rgb(250, 157, 16)', 'rgb(239, 107, 1)', 'rgb(194, 9, 55)', 'rgb(192, 0, 0)'],
         func: function (n) {
-            return cls(customColorSchemes.igirgi2.list, n);
+            return createCompanyScheme(customColorSchemes.igirgi2.list, n);
         }
     },
     "igirgi3": {
         list: ['rgb(226, 226, 226)', 'rgb(149, 160, 178)', 'rgb(105, 133, 175)', 'rgb(71, 91, 121)'],
         func: function (n) {
-            return cls(customColorSchemes.igirgi3.list, n);
+            return createCompanyScheme(customColorSchemes.igirgi3.list, n);
         }
     },
     "igirgi4": {
         list: [ 'rgb(186, 186, 186)', 'rgb(178, 178, 178)', 'rgb(107, 107, 107)', 'rgb(61, 70, 74)'],
         func: function (n) {
-            return cls(customColorSchemes.igirgi4.list, n);
+            return createCompanyScheme(customColorSchemes.igirgi4.list, n);
         }
     },
 }
-// list: ['rgb(226, 226, 226)', 'rgb(178, 178, 178)', 'rgb(149, 160, 178)', 'rgb(71, 91, 121)',],
 
+/*
+    Список всех цветовых схем приложения:
+    схема берется либо из библиотеки d3,
+    либо создается и берется из объекта customColorSchemes.
+ */
 export const colorSchemesObject = {
     "igirgi1": {
         name: "igirgi1",

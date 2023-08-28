@@ -8,6 +8,7 @@ const Serialization = () => {
 
     const {store} = useContext(Context)
 
+    /* выполняем нужную операцию */
     const executeOperation = (deep, prev, index, modifiedData) => {
         let clone = JSON.parse(JSON.stringify(store.chartData))
         if(!deep) {
@@ -24,9 +25,11 @@ const Serialization = () => {
             return clone
         }
 
+        // current - ссылка на clone
         let current = clone
         let prevList = prev.slice(1,).reverse()
 
+        /* ищем сигмент, (над которым/около которого) нужно выполнить операзцию */
         while (prevList.length) {
             current = current.children[prevList[prevList.length - 1].index]
             prevList = prevList.slice(0, -1)
@@ -35,9 +38,11 @@ const Serialization = () => {
         // console.log('modifiedData', modifiedData)
         // console.log(current, current.children.length )
 
+        // переименовывание
         if (modifiedData.type === 'rename')
             current.children[index].name = modifiedData.value
 
+        // если у родительского сигмента больше нет детей, то удалить .children и добавить .value
         if (modifiedData.type === 'delete') {
             if(current.children.length === 1) {
                 current.value = current.children[0].value
@@ -45,7 +50,7 @@ const Serialization = () => {
             } else current.children.splice(index, 1)
         }
 
-
+        // если у родительского сигмента не было .children, то добавить
         if (modifiedData.type === 'add')
             current.children[index].children
                 ?
@@ -60,6 +65,7 @@ const Serialization = () => {
         return clone
     }
 
+    /* изменяем данные и сохраняем их */
     const changeData = ({deep, index, prev, modifiedData}) => {
         let clone = executeOperation(deep, prev, index, modifiedData)
         // console.log('clone: ', clone)

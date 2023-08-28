@@ -12,11 +12,13 @@ const SunburstBlock = observer(({isFullscreen=false, parentRef=null, isPrintMode
 
     const  minSize = (a, b) => a > b ? b : a
     const offset = 40
+    // Изменить размер диаграммы при переключении на режим печати или полноэкранные режим
     useEffect(() => {
         if (isFullscreen) setSIZE(window.screen.height - 20)
         else if (isPrintMode) setSIZE(window.innerHeight - 80)
         else setSIZE(minSize(window.innerWidth / (2 / 3) - offset, window.innerHeight - offset))
     }, [isFullscreen, isPrintMode])
+
 
 
     const copy = obj => JSON.parse(JSON.stringify(obj))
@@ -29,33 +31,23 @@ const SunburstBlock = observer(({isFullscreen=false, parentRef=null, isPrintMode
             .sort((a, b) => b.value - a.value)
     );
 
+    /* текущий корень дерева (ссылается также и на дочерние сигменты) */
     const [root, setRoot] = useState({
         tree: partition(store.chartData),
         history: []
     })
 
+    /* текущий изначального дерева */
     const [rootData, setRootData] = useState(partition(store.chartData));
 
-    // useEffect(() => {
-    //     let new_root = partition(store.chartData)
-    //     setRoot({
-    //         tree: new_root,
-    //         history: []
-    //     })
-    // }, [store.chartData])
-    //
-    // useEffect(() => {
-    //     setRootData(partition(store.chartData))
-    //     }, [store.chartData])
 
     const [loading, setLoading] = useState(true)
 
+    // Заполняет структуру дерева
     useEffect(() => {
         if(!loading) setLoading(true);
-
         new Promise((resolve, reject) => {
             let new_root = partition(store.chartData);
-            // let new_root_data = partition(store.chartData);
             setRoot({
                 tree: new_root,
                 history: []
@@ -66,6 +58,7 @@ const SunburstBlock = observer(({isFullscreen=false, parentRef=null, isPrintMode
             .then(v => setLoading(false))
     }, [store.chartData])
 
+    /* Заполнение истории переходов по сигментам */
     const fillHistory = treetop => {
         let arr = []
         let cur = treetop
@@ -78,6 +71,7 @@ const SunburstBlock = observer(({isFullscreen=false, parentRef=null, isPrintMode
         return arr.reverse()
     }
 
+    /* Переход на нижний/верхний уровень в диаграмме */
     const treetopRepositioningV2 = treetop => {
         // выбранная вершина - корень всего дерева
         if (!treetop.depth && !root.tree && !treetop.depth) return
@@ -99,7 +93,6 @@ const SunburstBlock = observer(({isFullscreen=false, parentRef=null, isPrintMode
             })
         } else {
             // выбранная вершина - текущая (но не вершина всего дерева) => подъем
-            // console.log('проверка на подъем')
             if(!root.history.length) return;
             setRoot(prev => {
                 return {

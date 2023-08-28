@@ -4,7 +4,7 @@ import {DotsSixVertical, Trash, Plus, ArrowsOutSimple} from '@phosphor-icons/rea
 
 const SerializationItemControl = ({item, deep, changeName, deleteFamily, addChild}) => {
 
-    const [input, setInput] = useState(item.name)
+    const [input, setInput] = useState(item.name ? item.name : '')
 
     useEffect(() => {
         if (input !== item.name) setInput(item.name)
@@ -27,15 +27,6 @@ const SerializationItemControl = ({item, deep, changeName, deleteFamily, addChil
 
     return (
         <div className="flex">
-            {/*<DotsSixVertical*/}
-            {/*    className="move-item"*/}
-            {/*    weight="bold"*/}
-            {/*/>*/}
-            {/*<ArrowsOutSimple*/}
-            {/*    className="resize-item"*/}
-            {/*    // weight="bold"*/}
-            {/*    size={20}*/}
-            {/*/>*/}
             <input
                 type="text"
                 className="form-control"

@@ -30,13 +30,13 @@ const ModalFileLoader = ({active, setMode, load}) => {
         load(dataFile)
     }
 
+    /* Читает .json файл и возращает его содержание */
     const onDrop = (acceptedFiles) => {
         if(!acceptedFiles.length) return
         const file = acceptedFiles[0]
         const reader = new FileReader()
         reader.onload = () => {
             const fileContent = reader.result;
-            // console.log(fileContent, typeof(fileContent))
             let jsonData = null
 
             try {
@@ -46,10 +46,6 @@ const ModalFileLoader = ({active, setMode, load}) => {
             } catch (e) {
 
             }
-
-            // const jsonData = JSON.parse(fileContent);
-
-
         }
         reader.readAsText(file);
     }
